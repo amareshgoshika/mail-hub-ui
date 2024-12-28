@@ -11,13 +11,12 @@ function EmailForm() {
 
   const [credentials, setCredentials] = useState(null);
   const [attachment, setAttachment] = useState(null);
-  const [authUrl, setAuthUrl] = useState('');
 
   const handleAuth = async () => {
     try {
       const response = await axios.get('http://localhost:8000/authenticate');
       const authUrl = response.data.authUrl;
-      window.location.href = authUrl; // Redirect to the auth URL provided by the backend
+      window.location.href = authUrl;
     } catch (error) {
       alert('Error initiating authentication: ' + error.message);
     }
@@ -71,16 +70,6 @@ function EmailForm() {
     }
   };
 
-  const handleSaveToken = async () => {
-    try {
-      // This will trigger the backend to save the token
-      const response = await axios.post('http://localhost:8000/save-token');
-      alert('Token saved successfully!');
-    } catch (error) {
-      alert('Error saving token: ' + error.message);
-    }
-  };
-
   return (
     <div>
       <form onSubmit={handleFileSubmit}>
@@ -92,8 +81,6 @@ function EmailForm() {
         <button type="submit">Upload Credentials</button>
         <button type="button" onClick={handleAuth}>Authenticate Gmail</button>
       </form>
-
-      <button type="button" onClick={handleSaveToken}>Save Token</button>
 
       <form onSubmit={handleSubmit}>
         <h2>Send Email</h2>
