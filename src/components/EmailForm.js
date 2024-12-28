@@ -49,8 +49,8 @@ function EmailForm() {
     try {
       const response = await axios.post('http://localhost:8000/send-email', form);
       console.log('Recipient:', formData.recipientEmail);
-    console.log('Subject:', formData.subject);
-    console.log('Body:', formData.emailBody);
+      console.log('Subject:', formData.subject);
+      console.log('Body:', formData.emailBody);
       alert(response.data.message);
     } catch (err) {
       alert(`Error: ${err.response.data.error}`);
@@ -71,41 +71,98 @@ function EmailForm() {
   };
 
   return (
-    <div>
-      <form onSubmit={handleFileSubmit}>
-        <h2>Upload Credentials</h2>
-        <div>
-          <label>Credentials JSON:</label>
-          <input type="file" name="credentials" onChange={handleFileChange} required />
-        </div>
-        <button type="submit">Upload Credentials</button>
-        <button type="button" onClick={handleAuth}>Authenticate Gmail</button>
-      </form>
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        {/* Upload Credentials Form */}
+        <form onSubmit={handleFileSubmit} className="mb-8">
+          <h2 className="text-2xl font-bold text-center mb-4">Upload Credentials</h2>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Credentials JSON:</label>
+            <input 
+              type="file" 
+              name="credentials" 
+              onChange={handleFileChange} 
+              required 
+              className="w-full mt-2 p-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          <div className="flex justify-between">
+            <button 
+              type="submit" 
+              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+            >
+              Upload Credentials
+            </button>
+            <button 
+              type="button" 
+              onClick={handleAuth} 
+              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+            >
+              Authenticate Gmail
+            </button>
+          </div>
+        </form>
 
-      <form onSubmit={handleSubmit}>
-        <h2>Send Email</h2>
-        <div>
-          <label>Recipient Name:</label>
-          <input type="text" name="recipientName" onChange={handleInputChange} required />
-        </div>
-        <div>
-          <label>Recipient Email:</label>
-          <input type="email" name="recipientEmail" onChange={handleInputChange} required />
-        </div>
-        <div>
-          <label>Subject:</label>
-          <input type="text" name="subject" onChange={handleInputChange} required />
-        </div>
-        <div>
-          <label>Email Body:</label>
-          <textarea name="emailBody" onChange={handleInputChange} required />
-        </div>
-        <div>
-          <label>Attachment:</label>
-          <input type="file" name="attachment" onChange={handleFileChange} required />
-        </div>
-        <button type="submit">Send Email</button>
-      </form>
+        {/* Send Email Form */}
+        <form onSubmit={handleSubmit}>
+          <h2 className="text-2xl font-bold text-center mb-4">Send Email</h2>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Recipient Name:</label>
+            <input 
+              type="text" 
+              name="recipientName" 
+              onChange={handleInputChange} 
+              required 
+              className="w-full mt-2 p-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Recipient Email:</label>
+            <input 
+              type="email" 
+              name="recipientEmail" 
+              onChange={handleInputChange} 
+              required 
+              className="w-full mt-2 p-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Subject:</label>
+            <input 
+              type="text" 
+              name="subject" 
+              onChange={handleInputChange} 
+              required 
+              className="w-full mt-2 p-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Email Body:</label>
+            <textarea 
+              name="emailBody" 
+              onChange={handleInputChange} 
+              required 
+              className="w-full mt-2 p-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Attachment:</label>
+            <input 
+              type="file" 
+              name="attachment" 
+              onChange={handleFileChange} 
+              required 
+              className="w-full mt-2 p-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          <button 
+            type="submit" 
+            className="bg-blue-500 text-white px-4 py-2 rounded-md w-full hover:bg-blue-600 transition"
+          >
+            Send Email
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
