@@ -42,27 +42,13 @@ function UserRegistration() {
     }
   };
 
-  // const handleAuth = async () => {
-  //   try {
-  //     const response = await axios.get('http://localhost:8000/authenticate');
-  //     const authUrl = response.data.authUrl;
-  //     window.location.href = authUrl;
-  //   } catch (error) {
-  //     alert('Error initiating authentication: ' + error.message);
-  //   }
-  // };
   const handleAuth = async () => {
     try {
-      // Step 1: Make the request to your /authenticate route
       const response = await axios.get('http://localhost:8000/authenticate', {
         responseType: 'json' // Expecting JSON response
       });
-  
-      // Step 2: Extract the authorization URL
-      const authUrl = response.data.authUrl;
-  
-      // Step 3: Redirect the user to the Google OAuth URL to authorize the app
-      window.location.href = authUrl;
+        const authUrl = response.data.authUrl;
+        window.location.href = authUrl;
   
     } catch (error) {
       alert('Error initiating authentication: ' + error.message);
