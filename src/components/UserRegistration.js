@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Import axios for making API requests
+import axios from 'axios';
 
 function UserRegistration() {
   const [formData, setFormData] = useState({
@@ -8,6 +8,7 @@ function UserRegistration() {
     email: '',
     phone: '',
     password: '',
+    credentials: '',
   });
   const navigate = useNavigate();
 
@@ -17,12 +18,23 @@ function UserRegistration() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    const dataToSubmit = {
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      password: formData.password,
+      credentials: formData.credentials,
+    };
+  
     try {
-      // Send the form data to your API
-      const response = await axios.post('http://localhost:8000/api/register', formData);
+      const response = await axios.post('http://localhost:8000/api/register', dataToSubmit, {
+        headers: {
+          'Content-Type': 'application/json', // Set Content-Type to application/json
+        },
+      });
       console.log('Registration successful:', response.data);
       alert('User registered successfully!');
-      // Redirect to another page after successful registration
       navigate('/');
     } catch (error) {
       console.error('Error during registration:', error);
@@ -30,6 +42,32 @@ function UserRegistration() {
     }
   };
 
+  const handleDownloadComplete = () => {
+    alert('Token generated and download completed!');
+    navigate('/register');
+  }
+  const handleAuth = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/authenticate', {
+        responseType: 'blob',
+      });
+  
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'token.pickle');
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+  
+      // Handle completion
+      handleDownloadComplete();
+    } catch (error) {
+      console.error('Error during authentication:', error);
+      alert('An error occurred during authentication.');
+    }
+  };
+  
   const handleInfoClick = () => {
     navigate('/upload-credentials-info');
   };
@@ -89,7 +127,7 @@ function UserRegistration() {
 
           <div className="mb-4">
             <div className="flex items-center justify-between">
-              <label className="block text-sm font-medium text-gray-700">Upload Credentials (JSON):</label>
+              <label className="block text-sm font-medium text-gray-700">Credentials file URL</label>
               <button
                 type="button"
                 onClick={handleInfoClick}
@@ -99,10 +137,10 @@ function UserRegistration() {
               </button>
             </div>
             <input
-              type="file"
+              type="text"
               name="credentials"
-              accept="application/json"
-              // onChange={handleFileChange}
+              value={formData.credentials}
+              onChange={handleInputChange}
               required
               className="w-full mt-2 p-2 border border-gray-300 rounded-md"
             />
@@ -111,6 +149,7 @@ function UserRegistration() {
           <div className="flex justify-between items-center mb-6">
             <button
               type="button"
+                onClick={handleAuth}
               className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
             >
               Generate Token
