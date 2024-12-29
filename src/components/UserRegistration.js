@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -42,32 +42,35 @@ function UserRegistration() {
     }
   };
 
-  const handleDownloadComplete = () => {
-    alert('Token generated and download completed!');
-    navigate('/register');
-  }
+  // const handleAuth = async () => {
+  //   try {
+  //     const response = await axios.get('http://localhost:8000/authenticate');
+  //     const authUrl = response.data.authUrl;
+  //     window.location.href = authUrl;
+  //   } catch (error) {
+  //     alert('Error initiating authentication: ' + error.message);
+  //   }
+  // };
   const handleAuth = async () => {
     try {
+      // Step 1: Make the request to your /authenticate route
       const response = await axios.get('http://localhost:8000/authenticate', {
-        responseType: 'blob',
+        responseType: 'json' // Expecting JSON response
       });
   
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'token.pickle');
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode.removeChild(link);
+      // Step 2: Extract the authorization URL
+      const authUrl = response.data.authUrl;
   
-      // Handle completion
-      handleDownloadComplete();
+      // Step 3: Redirect the user to the Google OAuth URL to authorize the app
+      window.location.href = authUrl;
+  
     } catch (error) {
-      console.error('Error during authentication:', error);
-      alert('An error occurred during authentication.');
+      alert('Error initiating authentication: ' + error.message);
     }
   };
   
+  
+
   const handleInfoClick = () => {
     navigate('/upload-credentials-info');
   };
