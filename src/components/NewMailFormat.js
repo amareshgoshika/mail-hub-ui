@@ -2,7 +2,6 @@ import React, { useState } from "react";
 
 const NewMailFormat = () => {
   const [attachments, setAttachments] = useState([]);
-  const [signature, setSignature] = useState({ name: "", phone: "" });
   const [formatName, setFormatName] = useState("");
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
