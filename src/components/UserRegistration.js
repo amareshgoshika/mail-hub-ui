@@ -28,9 +28,9 @@ function UserRegistration() {
     };
   
     try {
-      const response = await axios.post('http://localhost:8000/api/register', dataToSubmit, {
+      const response = await axios.post(process.env.REACT_APP_REGISTER_URL, dataToSubmit, {
         headers: {
-          'Content-Type': 'application/json', // Set Content-Type to application/json
+          'Content-Type': 'application/json',
         },
       });
       console.log('Registration successful:', response.data);
@@ -44,7 +44,7 @@ function UserRegistration() {
 
   const handleAuth = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/authenticate', {
+      const response = await axios.get(process.env.REACT_APP_AUTHENTICATE_URL, {
         responseType: 'json' // Expecting JSON response
       });
         const authUrl = response.data.authUrl;

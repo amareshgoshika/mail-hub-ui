@@ -14,7 +14,7 @@ function EmailForm() {
 
   const handleAuth = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/authenticate');
+      const response = await axios.get(process.env.REACT_APP_AUTHENTICATE_URL);
       const authUrl = response.data.authUrl;
       window.location.href = authUrl;
     } catch (error) {
@@ -47,7 +47,7 @@ function EmailForm() {
     console.log('FormData:', form);
 
     try {
-      const response = await axios.post('http://localhost:8000/send-email', form);
+      const response = await axios.post(process.env.REACT_APP_SENDEMAIL_URL, form);
       console.log('Recipient:', formData.recipientEmail);
       console.log('Subject:', formData.subject);
       console.log('Body:', formData.emailBody);
@@ -63,7 +63,7 @@ function EmailForm() {
     formData.append('credentials', credentials);
 
     try {
-      const response = await axios.post('http://localhost:8000/upload-credentials', formData);
+      const response = await axios.post(PROCESS.ENV.REACT_APP_UPLOAD_CREDENTIAL_URL, formData);
       alert(response.data.message);
     } catch (err) {
       alert(`Error: ${err.response.data.error}`);
