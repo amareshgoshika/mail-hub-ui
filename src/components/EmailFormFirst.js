@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-function EmailForm() {
+function EmailFormFirst() {
   const [formData, setFormData] = useState({
     recipientName: '',
     recipientEmail: '',
@@ -14,7 +14,7 @@ function EmailForm() {
 
   const handleAuth = async () => {
     try {
-      const response = await axios.get(process.env.REACT_APP_AUTHENTICATE_URL);
+      const response = await axios.get('http://localhost:8000/authenticate');
       const authUrl = response.data.authUrl;
       window.location.href = authUrl;
     } catch (error) {
@@ -47,7 +47,7 @@ function EmailForm() {
     console.log('FormData:', form);
 
     try {
-      const response = await axios.post(process.env.REACT_APP_SENDEMAIL_URL, form);
+      const response = await axios.post('http://localhost:8000/send-email', form);
       console.log('Recipient:', formData.recipientEmail);
       console.log('Subject:', formData.subject);
       console.log('Body:', formData.emailBody);
@@ -63,7 +63,7 @@ function EmailForm() {
     formData.append('credentials', credentials);
 
     try {
-      const response = await axios.post(PROCESS.ENV.REACT_APP_UPLOAD_CREDENTIAL_URL, formData);
+      const response = await axios.post('http://localhost:8000/upload-credentials', formData);
       alert(response.data.message);
     } catch (err) {
       alert(`Error: ${err.response.data.error}`);
@@ -73,7 +73,6 @@ function EmailForm() {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        {/* Upload Credentials Form */}
         <form onSubmit={handleFileSubmit} className="mb-8">
           <h2 className="text-2xl font-bold text-center mb-4">Upload Credentials</h2>
           <div className="mb-4">
@@ -103,7 +102,6 @@ function EmailForm() {
           </div>
         </form>
 
-        {/* Send Email Form */}
         <form onSubmit={handleSubmit}>
           <h2 className="text-2xl font-bold text-center mb-4">Send Email</h2>
           <div className="mb-4">
@@ -167,4 +165,4 @@ function EmailForm() {
   );
 }
 
-export default EmailForm;
+export default EmailFormFirst;

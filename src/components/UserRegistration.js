@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function UserRegistration() {
   const [formData, setFormData] = useState({
@@ -7,28 +8,54 @@ function UserRegistration() {
     email: '',
     phone: '',
     password: '',
+    credentials: '',
   });
-  const [credentials, setCredentials] = useState(null);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleFileChange = (e) => {
-    setCredentials(e.target.files[0]);
-  };
-
-  const handleGenerateToken = () => {
-    alert('Token generated!');
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form Data:', formData);
-    console.log('Uploaded File:', credentials);
-    alert('Form submitted!');
+    
+    const dataToSubmit = {
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      password: formData.password,
+      credentials: formData.credentials,
+    };
+  
+    try {
+      const response = await axios.post(process.env.REACT_APP_REGISTER_URL, dataToSubmit, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log('Registration successful:', response.data);
+      alert('User registered successfully!');
+      navigate('/');
+    } catch (error) {
+      console.error('Error during registration:', error);
+      alert('An error occurred during registration.');
+    }
   };
+
+  const handleAuth = async () => {
+    try {
+      const response = await axios.get(process.env.REACT_APP_AUTHENTICATE_URL, {
+        responseType: 'json' // Expecting JSON response
+      });
+        const authUrl = response.data.authUrl;
+        window.location.href = authUrl;
+  
+    } catch (error) {
+      alert('Error initiating authentication: ' + error.message);
+    }
+  };
+  
+  
 
   const handleInfoClick = () => {
     navigate('/upload-credentials-info');
@@ -89,7 +116,7 @@ function UserRegistration() {
 
           <div className="mb-4">
             <div className="flex items-center justify-between">
-              <label className="block text-sm font-medium text-gray-700">Upload Credentials (JSON):</label>
+              <label className="block text-sm font-medium text-gray-700">Credentials file URL</label>
               <button
                 type="button"
                 onClick={handleInfoClick}
@@ -99,10 +126,10 @@ function UserRegistration() {
               </button>
             </div>
             <input
-              type="file"
+              type="text"
               name="credentials"
-              accept="application/json"
-              onChange={handleFileChange}
+              value={formData.credentials}
+              onChange={handleInputChange}
               required
               className="w-full mt-2 p-2 border border-gray-300 rounded-md"
             />
@@ -111,7 +138,7 @@ function UserRegistration() {
           <div className="flex justify-between items-center mb-6">
             <button
               type="button"
-              onClick={handleGenerateToken}
+                onClick={handleAuth}
               className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
             >
               Generate Token
