@@ -24,7 +24,7 @@ function LoginPage() {
       if (response.data.message === 'Login successful') {
         const userEmail = response.data.user.email;
         localStorage.setItem('userEmail', userEmail);
-        window.location.href = '/sendemail';  
+        window.location.href = '/sendEmail';  
       }
     } catch (error) {
       if (error.response) {
