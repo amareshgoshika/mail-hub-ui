@@ -24,10 +24,7 @@ function UserRegistration() {
       email: formData.email,
       phone: formData.phone,
       password: formData.password,
-      credentials: formData.credentials,
     };
-
-    dataToSubmit.append('credentials', credentials);
   
     try {
       const response = await axios.post(process.env.REACT_APP_REGISTER_URL, dataToSubmit, {

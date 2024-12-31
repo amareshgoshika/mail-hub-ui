@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -10,6 +10,17 @@ function SendEmail() {
     const [body, setBody] = useState('');
     const [attachments, setAttachments] = useState([]);
     const [selectedOption, setSelectedOption] = useState(null);
+    const [userEmail, setUserEmail] = useState('');
+
+  useEffect(() => {
+    const senderEmail = localStorage.getItem('userEmail');
+    
+    if (senderEmail) {
+      setUserEmail(senderEmail); 
+    } else {
+      window.location.href = '/login';
+    }
+  }, []);
 
     const handleFileChange = (e) => {
         setAttachments(e.target.files);
@@ -25,6 +36,7 @@ function SendEmail() {
         formData.append('recipientEmail', recipientEmail);
         formData.append('subject', subject);
         formData.append('emailBody', body);
+        formData.append('userEmail', userEmail);
 
         // Add attachments
         for (let i = 0; i < attachments.length; i++) {

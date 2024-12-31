@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -13,10 +14,28 @@ function LoginPage() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Perform login logic here
-    alert(`Logged in with Email: ${formData.email}`);
+    const { email, password } = formData; 
+  
+    try {
+      const response = await axios.post(process.env.REACT_APP_LOGIN_URL, { email, password });
+  
+      if (response.data.message === 'Login successful') {
+        const userEmail = response.data.user.email;
+        localStorage.setItem('userEmail', userEmail);
+        window.location.href = '/sendemail';  
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('Error response:', error.response); 
+        alert('Login failed: ' + error.response.data.message || error.message); 
+      } else if (error.request) {
+        alert('Login failed: No response from server');
+      } else {
+        alert('Login failed: ' + error.message);
+      }
+    }
   };
 
   return (
@@ -58,7 +77,6 @@ function LoginPage() {
           <div className="flex items-center justify-between">
             <button
               type="submit"
-              onClick={() => navigate('/sendEmail')}
               className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
             >
               Login
