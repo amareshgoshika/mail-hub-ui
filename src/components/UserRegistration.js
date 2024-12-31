@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function UserRegistration() {
+  const [credentials, setCredentials] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     password: '',
-    credentials: '',
   });
   const navigate = useNavigate();
 
@@ -26,6 +26,8 @@ function UserRegistration() {
       password: formData.password,
       credentials: formData.credentials,
     };
+
+    dataToSubmit.append('credentials', credentials);
   
     try {
       const response = await axios.post(process.env.REACT_APP_REGISTER_URL, dataToSubmit, {
@@ -39,6 +41,25 @@ function UserRegistration() {
     } catch (error) {
       console.error('Error during registration:', error);
       alert('An error occurred during registration.');
+    }
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.name === 'credentials') {
+      setCredentials(e.target.files[0]);
+    }
+  };
+
+  const handleFileSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('credentials', credentials);
+
+    try {
+      const response = await axios.post(process.env.REACT_APP_UPLOAD_CREDENTIAL_URL, formData);
+      alert(response.data.message);
+    } catch (err) {
+      alert(`Error: ${err.response.data.error}`);
     }
   };
 
@@ -116,7 +137,7 @@ function UserRegistration() {
 
           <div className="mb-4">
             <div className="flex items-center justify-between">
-              <label className="block text-sm font-medium text-gray-700">Credentials file URL</label>
+              <label className="block text-sm font-medium text-gray-700">Upload Credentials File</label>
               <button
                 type="button"
                 onClick={handleInfoClick}
@@ -125,14 +146,24 @@ function UserRegistration() {
                 Info
               </button>
             </div>
-            <input
-              type="text"
-              name="credentials"
-              value={formData.credentials}
-              onChange={handleInputChange}
-              required
+            
+            {/* File Input for Credentials */}
+            <input 
+              type="file" 
+              name="credentials" 
+              onChange={handleFileChange} 
               className="w-full mt-2 p-2 border border-gray-300 rounded-md"
+              required
             />
+            
+            {/* Upload Button */}
+            <button
+              type="button"
+              onClick={handleFileSubmit}
+              className="mt-3 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+            >
+              Upload
+            </button>
           </div>
 
           <div className="flex justify-between items-center mb-6">
