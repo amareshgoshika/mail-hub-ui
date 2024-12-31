@@ -52,11 +52,12 @@ function UserRegistration() {
 
   const handleFileSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append('credentials', credentials);
+    const formDataToSubmit = new FormData();
+    formDataToSubmit.append('credentials', credentials);
+    formDataToSubmit.append('email', formData.email);
 
     try {
-      const response = await axios.post(process.env.REACT_APP_UPLOAD_CREDENTIAL_URL, formData);
+      const response = await axios.post(process.env.REACT_APP_UPLOAD_CREDENTIAL_URL, formDataToSubmit);
       alert(response.data.message);
     } catch (err) {
       alert(`Error: ${err.response.data.error}`);
@@ -64,10 +65,15 @@ function UserRegistration() {
   };
 
   const handleAuth = async () => {
+    const email = formData.email;
     try {
-      const response = await axios.get(process.env.REACT_APP_AUTHENTICATE_URL, {
-        responseType: 'json' // Expecting JSON response
-      });
+      const response = await axios.post(process.env.REACT_APP_AUTHENTICATE_URL, 
+        { email: email }, 
+        {
+          headers: { 'Content-Type': 'application/json' }, 
+          responseType: 'json' 
+        }
+      );
         const authUrl = response.data.authUrl;
         window.location.href = authUrl;
   
