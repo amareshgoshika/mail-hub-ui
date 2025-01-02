@@ -1,15 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const NewMailFormat = () => {
   const [attachments, setAttachments] = useState([]);
   const [formatName, setFormatName] = useState("");
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
+  const [userEmail, setUserEmail] = useState('');
+
+  useEffect(() => {
+    const senderEmail = localStorage.getItem('userEmail');
+    
+    if (senderEmail) {
+      setUserEmail(senderEmail); 
+    }
+  }, []);
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     setAttachments(files);
   };
+
+  const handleSave = async () => {
+    const mailFormat = {
+      formatName,
+      subject,
+      body,
+      userEmail,
+    };
+  
+    try {
+      const response = await fetch(process.env.REACT_APP_MAIL_FORMAT_SAVE_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(mailFormat),
+      });
+  
+      const data = await response.json();
+      if (response.ok) {
+        alert("Mail format saved successfully!");
+      } else {
+        alert(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error("Error saving mail format:", error);
+      alert("Failed to save mail format.");
+    }
+  };
+  
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
@@ -83,26 +122,10 @@ const NewMailFormat = () => {
             </div>
           </div>
 
-          {/* Signature */}
-          <div className="mb-4">
-            <div className="mb-2">
-              <label className="block text-sm font-medium mb-2" htmlFor="signatureName">
-                Signature
-              </label>
-            <textarea
-              id="signature"
-              rows="4"
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              className="w-full border border-gray-300 rounded-md p-2"
-              placeholder="Enter signature"
-            />
-            </div>
-          </div>
-
           {/* Save Button */}
           <button
             type="button"
+            onClick={handleSave}
             className="w-full bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-600"
           >
             Save

@@ -3,14 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function SendEmail() {
-    const navigate = useNavigate();
-    const [recipientName, setRecipientName] = useState('');
-    const [recipientEmail, setRecipientEmail] = useState('');
-    const [subject, setSubject] = useState('');
-    const [body, setBody] = useState('');
-    const [attachments, setAttachments] = useState([]);
-    const [selectedOption, setSelectedOption] = useState(null);
-    const [userEmail, setUserEmail] = useState('');
+  const navigate = useNavigate();
+  const [recipientName, setRecipientName] = useState('');
+  const [recipientEmail, setRecipientEmail] = useState('');
+  const [subject, setSubject] = useState('');
+  const [body, setBody] = useState('');
+  const [attachments, setAttachments] = useState([]);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [mailFormats, setMailFormats] = useState([]);
+  const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
     const senderEmail = localStorage.getItem('userEmail');
@@ -20,6 +21,16 @@ function SendEmail() {
     } else {
       window.location.href = '/login';
     }
+    const fetchMailFormats = async () => {
+      try {
+          const response = await axios.get(`${process.env.REACT_APP_GET_MAIL_FORMATS_URL}?email=${senderEmail}`);
+          setMailFormats(response.data);
+      } catch (error) {
+          console.error('Error fetching mail formats:', error);
+      }
+  };
+
+  fetchMailFormats();
   }, []);
 
     const handleFileChange = (e) => {
@@ -54,6 +65,15 @@ function SendEmail() {
             alert('Failed to send email');
         }
     };
+
+    const handleMailFormatSelect = (formatId) => {
+      const selectedFormat = mailFormats.find((format) => format.id === formatId);
+      if (selectedFormat) {
+          setSubject(selectedFormat.subject);
+          setBody(selectedFormat.body);
+          setSelectedOption(formatId);
+      }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 mt-12 flex flex-col md:flex-row">
@@ -97,72 +117,65 @@ function SendEmail() {
         </form>
       </div>
 
-      {/* Right Side: Mail Contents */}
       <div className="bg-white shadow-md rounded-md p-4 md:w-1/2">
         <h2 className="text-xl font-bold mb-4">Mail Contents</h2>
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-2">Choose an Option:</label>
-          <div className="flex space-x-4">
-            <label className="flex items-center">
-              <input
-                type="radio"
-                name="mailOption"
-                value="mailForm"
-                className="mr-2"
-                onChange={(e) => setSelectedOption(e.target.value)}
-              />
-              Mail Form
-            </label>
-          </div>
+            <label className="block text-sm font-medium mb-2">Choose an Option:</label>
+            {mailFormats.map((format) => (
+                <label key={format.id} className="flex items-center mb-2">
+                    <input
+                        type="radio"
+                        name="mailOption"
+                        value={format.id}
+                        checked={selectedOption === format.id}
+                        onChange={() => handleMailFormatSelect(format.id)}
+                        className="mr-2"
+                    />
+                    {format.formatName}
+                </label>
+            ))}
         </div>
-        {selectedOption === 'mailForm' && (
-          <form>
+
+        <form>
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2" htmlFor="subject">
-                Mail Subject
-              </label>
-              <input
-                type="text"
-                id="subject"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                className="w-full border border-gray-300 rounded-md p-2"
-                placeholder="Enter subject"
-              />
+                <label className="block text-sm font-medium mb-2" htmlFor="subject">
+                    Mail Subject
+                </label>
+                <input
+                    type="text"
+                    id="subject"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    className="w-full border border-gray-300 rounded-md p-2"
+                    placeholder="Enter subject"
+                />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2" htmlFor="body">
-                Mail Body
-              </label>
-              <textarea
-                id="body"
-                rows="6"
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                className="w-full border border-gray-300 rounded-md p-2"
-                placeholder="Enter email body"
-              />
+                <label className="block text-sm font-medium mb-2" htmlFor="body">
+                    Mail Body
+                </label>
+                <textarea
+                    id="body"
+                    rows="6"
+                    value={body}
+                    onChange={(e) => setBody(e.target.value)}
+                    className="w-full border border-gray-300 rounded-md p-2"
+                    placeholder="Enter email body"
+                />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2" htmlFor="attachments">
-                Attachments
-              </label>
-              <input
-                type="file"
-                id="attachments"
-                multiple
-                onChange={handleFileChange}
-                className="w-full border border-gray-300 rounded-md p-2"
-              />
+                <label className="block text-sm font-medium mb-2" htmlFor="attachments">
+                    Attachments
+                </label>
+                <input
+                    type="file"
+                    id="attachments"
+                    multiple
+                    onChange={handleFileChange}
+                    className="w-full border border-gray-300 rounded-md p-2"
+                />
             </div>
-            <button
-              type="button"
-              className="w-full bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-600"
-            >
-              Update Format
-            </button>
-          </form>
-        )}
+        </form>
         <button
           type="button"
             onClick={() => navigate('/newMailFormat')}
