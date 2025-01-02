@@ -8,7 +8,7 @@ function Welcome() {
           Welcome to Our Homepage!
         </h1>
         <p className="text-gray-700 text-center">
-          We are glad to have you here. Explore our features and enjoy your stay.
+          We are glad to have you here.
         </p>
       </div>
     </div>
