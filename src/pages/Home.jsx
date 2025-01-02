@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import LoginPage from "../components/LoginPage";
-import Header from "../components/Header";
+import Welcome from "../components/Welcome";
 
 const Home = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -9,8 +8,7 @@ const Home = () => {
   }
   return (
     <>
-      <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-      <LoginPage darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      <Welcome darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
     </>
   );
 };
