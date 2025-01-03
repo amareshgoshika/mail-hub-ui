@@ -5,6 +5,7 @@ import UploadCredentialsInfo from './components/UploadCredentialsInfo';
 import Home from './pages/Home';
 import NewMailFormat from './components/NewMailFormat';
 import SendEmail from './components/SendEmail';
+import CredentialGenerate from './components/CredentialGenerate';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Route path="/register" element={<UserRegistration />} />
       <Route path="/upload-credentials-info" element={<UploadCredentialsInfo />} />
       <Route path="/newMailFormat" element={<NewMailFormat />} />
+      <Route path="/credentialGenerate" element={<CredentialGenerate />} />
     </Routes>
   );
 }
