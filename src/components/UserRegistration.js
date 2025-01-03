@@ -36,8 +36,12 @@ function UserRegistration() {
       alert('User registered successfully!');
       navigate('/');
     } catch (error) {
-      console.error('Error during registration:', error);
-      alert('An error occurred during registration.');
+      if (error.response && error.response.status === 400) {
+        alert(error.response.data.message || 'User already registered.');
+      } else {
+        console.error('Error during registration:', error);
+        alert('An error occurred during registration.' + error.message);
+      }
     }
   };
 
