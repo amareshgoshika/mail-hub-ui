@@ -31,6 +31,7 @@ function UserRegistration() {
           'Content-Type': 'application/json',
         },
       });
+      console.log('Registration successful:', response.data);
 
       localStorage.setItem('userEmail', formData.email);
       navigate('/credentialGenerate');
