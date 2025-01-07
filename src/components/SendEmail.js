@@ -99,12 +99,20 @@ function SendEmail() {
           current: prevState.current + 1,
           total: prevState.total,
         }));
+      alert('Emails sent successfully!');
       } catch (error) {
-        console.error('Error sending email to', email, error);
+        if (error.response) {
+          if (error.response.status === 400 && error.response.data.message === 'No credits available') {
+            alert('You have run out of credits. Please purchase more to continue sending emails.');
+          } else {
+            alert(`Failed to send email to ${email}. Error: ${error.response.data.message}`);
+          }
+        } else {
+          console.error('Error sending email to', email, error);
+          alert(`Unexpected error occurred while sending email to ${email}`);
+        }
       }
     }
-
-    alert('Emails sent successfully!');
     setSendingProgress(null);
     navigate('/sendEmail');
   };
