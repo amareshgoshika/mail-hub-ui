@@ -75,6 +75,10 @@ function SendEmail() {
 
     setSendingProgress({ current: 0, total: emailsToSend.length });
 
+    let successCount = 0;
+    let failedEmails = [];
+    let creditError = false;
+
     for (let i = 0; i < emailsToSend.length; i++) {
       const email = emailsToSend[i];
       try {
@@ -99,31 +103,47 @@ function SendEmail() {
           current: prevState.current + 1,
           total: prevState.total,
         }));
-      alert('Emails sent successfully!');
+
+        successCount++;
+
       } catch (error) {
         if (error.response) {
           if (error.response.status === 400 && error.response.data.message === 'No credits available') {
-            alert('You have run out of credits. Please purchase more to continue sending emails.');
+            creditError = true;
+            break;
           } else {
-            alert(`Failed to send email to ${email}. Error: ${error.response.data.message}`);
+            failedEmails.push(email);
           }
         } else {
           console.error('Error sending email to', email, error);
-          alert(`Unexpected error occurred while sending email to ${email}`);
+          failedEmails.push(email);
         }
       }
     }
+
+    let summaryMessage = `${successCount} email(s) sent successfully.`;
+  
+    if (failedEmails.length > 0) {
+      summaryMessage += `\nFailed to send to the following emails:\n${failedEmails.join(', ')}`;
+    }
+    
+    if (creditError) {
+      summaryMessage += `\nStopped due to insufficient credits.`;
+    }
+
+    alert(summaryMessage);
+  
     setSendingProgress(null);
     navigate('/sendEmail');
   };
 
-    const handleMailFormatSelect = (formatId) => {
-      const selectedFormat = mailFormats.find((format) => format.id === formatId);
-      if (selectedFormat) {
-          setSubject(selectedFormat.subject);
-          setBody(selectedFormat.body);
-          setSelectedOption(formatId);
-      }
+  const handleMailFormatSelect = (formatId) => {
+    const selectedFormat = mailFormats.find((format) => format.id === formatId);
+    if (selectedFormat) {
+        setSubject(selectedFormat.subject);
+        setBody(selectedFormat.body);
+        setSelectedOption(formatId);
+    }
   };
 
   const handleReset = () => {
