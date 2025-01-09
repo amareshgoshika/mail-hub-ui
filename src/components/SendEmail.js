@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Papa from 'papaparse';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 function SendEmail() {
   const navigate = useNavigate();
@@ -156,6 +158,10 @@ function SendEmail() {
     }
   };
 
+  const handleBodyChange = (value) => {
+    setBody(value);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-4 mt-12 flex flex-col md:flex-row">
       {/* Left Side: Add Recipients Details */}
@@ -260,8 +266,8 @@ function SendEmail() {
             ))}
         </div>
 
-        <form>
-            <div className="mb-4">
+        <form className="space-y-6">
+            <div>
                 <label className="block text-sm font-medium mb-2" htmlFor="subject">
                     Mail Subject
                 </label>
@@ -274,20 +280,61 @@ function SendEmail() {
                     placeholder="Enter subject"
                 />
             </div>
-            <div className="mb-4">
+            <div>
                 <label className="block text-sm font-medium mb-2" htmlFor="body">
                     Mail Body
                 </label>
-                <textarea
-                    id="body"
-                    rows="6"
-                    value={body}
-                    onChange={(e) => setBody(e.target.value)}
-                    className="w-full border border-gray-300 rounded-md p-2"
-                    placeholder="Enter email body"
+                <div className="border border-gray-300 rounded-md overflow-hidden">
+                    <ReactQuill
+                        value={body}
+                        onChange={handleBodyChange}
+                        theme="snow"
+                        placeholder="Enter email body"
+                        modules={{
+                            toolbar: [
+                                [{ font: [] }],
+                                [{ size: [] }],
+                                ['bold', 'italic', 'underline', 'strike'],
+                                [{ color: [] }, { background: [] }],
+                                [{ align: [] }],
+                                ['blockquote', 'code-block'],
+                                [{ list: 'ordered' }, { list: 'bullet' }],
+                                ['link', 'image', 'video'],
+                                ['clean'], // Remove formatting
+                            ],
+                        }}
+                        formats={[
+                            'font',
+                            'size',
+                            'bold',
+                            'italic',
+                            'underline',
+                            'strike',
+                            'color',
+                            'background',
+                            'align',
+                            'blockquote',
+                            'code-block',
+                            'list',
+                            'bullet',
+                            'link',
+                            'image',
+                            'video',
+                        ]}
+                        className="w-full"
+                        style={{ minHeight: '250px' }}
                 />
+                </div>
             </div>
-            <div className="mb-4">
+          <style>
+          {`
+            .ql-container {
+              border: none !important;
+            }
+          `}
+          </style>
+
+            <div>
                 <label className="block text-sm font-medium mb-2" htmlFor="attachments">
                     Attachments
                 </label>
