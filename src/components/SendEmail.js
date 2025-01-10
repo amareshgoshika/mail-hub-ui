@@ -841,35 +841,36 @@ function SendEmail() {
           </style>
 
             <div>
-                <label className="block text-sm font-medium mb-2" htmlFor="attachments">
-                    Attachments
-                </label>
-                <div
-                  className={`file-upload ${isAttachActive ? "active" : ""}`}
-                  style={{ marginBottom: "16px" }}
-                >
-                  <div className="file-select">
-                    <div className="file-select-button">Choose File</div>
-                    <div className="file-select-name">{attachFileNames}</div>
-                    <input
-                      type="file"
-                      multiple
-                      onChange={handleAttachmentChange}
-                      ref={attachInputRef}
-                    />
-                  </div>
+              <label className="block text-sm font-medium mb-2" htmlFor="attachments">
+                  Attachments
+              </label>
+              <div
+                className={`file-upload ${isAttachActive ? "active" : ""}`}
+                style={{ marginBottom: "16px" }}
+              >
+                <div className="file-select">
+                  <div className="file-select-button">Choose File</div>
+                  <div className="file-select-name">{attachFileNames}</div>
+                  <input
+                    type="file"
+                    multiple
+                    onChange={handleAttachmentChange}
+                    ref={attachInputRef}
+                  />
                 </div>
-
-                <button
-                  type="button"
-                  className="button"
-                  onClick={() => navigate("/newMailFormat")}
-                >
-                  Add Mail Format
-                </button>
               </div>
+
+              <button
+                type="button"
+                className="button"
+                onClick={() => navigate("/newMailFormat")}
+              >
+                Add Mail Format
+              </button>
+            </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </>
