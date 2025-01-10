@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const NewMailFormat = () => {
   const [attachments, setAttachments] = useState([]);
@@ -86,14 +88,57 @@ const NewMailFormat = () => {
             <label className="block text-sm font-medium mb-2 text-gray-700">
               Body
             </label>
-            <textarea
-              rows="6"
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none"
-              placeholder="Enter email body"
-            />
+            <div className="rounded-md overflow-hidden border" style={{ minHeight: '250px' }}>
+              <ReactQuill
+                value={body}
+                onChange={setBody}
+                theme="snow"
+                placeholder="Enter email body"
+                modules={{
+                  toolbar: [
+                    [{ font: [] }],
+                    [{ size: [] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ color: [] }, { background: [] }],
+                    [{ align: [] }],
+                    ['blockquote', 'code-block'],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    ['link', 'image', 'video'],
+                    ['clean'],
+                  ],
+                }}
+                formats={[
+                  'font',
+                  'size',
+                  'bold',
+                  'italic',
+                  'underline',
+                  'strike',
+                  'color',
+                  'background',
+                  'align',
+                  'blockquote',
+                  'code-block',
+                  'list',
+                  'bullet',
+                  'link',
+                  'image',
+                  'video',
+                ]}
+                className="w-full"
+                style={{
+                  minHeight: '250px',
+                }}
+              />
+            </div>
           </div>
+          <style>
+          {`
+            .ql-container {
+              border: none !important;
+            }
+          `}
+          </style>
 
           {/* Attachments */}
           <div className="mb-6">

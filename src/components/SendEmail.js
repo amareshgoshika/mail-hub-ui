@@ -1,7 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import Papa from "papaparse";
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Papa from 'papaparse';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
 
 /**
  * Inline CSS for a cleaner, more minimal UI.
@@ -538,6 +541,10 @@ function SendEmail() {
 
     setSendingProgress({ current: 0, total: emailsToSend.length });
 
+    let successCount = 0;
+    let failedEmails = [];
+    let creditError = false;
+
     for (let i = 0; i < emailsToSend.length; i++) {
       const email = emailsToSend[i];
       try {
@@ -560,13 +567,34 @@ function SendEmail() {
           current: prev.current + 1,
           total: prev.total,
         }));
-        alert("Emails sent successfully!");
+        successCount++;
+
       } catch (error) {
-        console.error("Error sending email to", email, error);
+        if (error.response) {
+          if (error.response.status === 400 && error.response.data.message === 'No credits available') {
+            creditError = true;
+            break;
+          } else {
+            failedEmails.push(email);
+          }
+        } else {
+          console.error('Error sending email to', email, error);
+          failedEmails.push(email);
+        }
       }
     }
 
-    alert("Emails sent successfully!");
+    let summaryMessage = `${successCount} email(s) sent successfully.`;
+  
+    if (failedEmails.length > 0) {
+      summaryMessage += `\nFailed to send to the following emails:\n${failedEmails.join(', ')}`;
+    }
+    
+    if (creditError) {
+      summaryMessage += `\nStopped due to insufficient credits.`;
+    }
+
+    alert(summaryMessage);
     setSendingProgress(null);
     navigate("/sendEmail");
   };
@@ -620,6 +648,10 @@ function SendEmail() {
     if (attachInputRef.current) {
       attachInputRef.current.value = "";
     }
+  };
+
+  const handleBodyChange = (value) => {
+    setBody(value);
   };
 
   return (
@@ -698,7 +730,6 @@ function SendEmail() {
                     />
                   </div>
                 </div>
-
                 {/* Buttons & progress */}
                 <div style={{ marginTop: "16px" }}>
                   <button
@@ -753,23 +784,65 @@ function SendEmail() {
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
                     placeholder="Enter subject"
-                  />
+                />
+            </div>
+            <div>
+                <label className="block text-sm font-medium mb-2" htmlFor="body">
+                    Mail Body
+                </label>
+                <div className="border border-gray-300 rounded-md overflow-hidden">
+                    <ReactQuill
+                        value={body}
+                        onChange={handleBodyChange}
+                        theme="snow"
+                        placeholder="Enter email body"
+                        modules={{
+                            toolbar: [
+                                [{ font: [] }],
+                                [{ size: [] }],
+                                ['bold', 'italic', 'underline', 'strike'],
+                                [{ color: [] }, { background: [] }],
+                                [{ align: [] }],
+                                ['blockquote', 'code-block'],
+                                [{ list: 'ordered' }, { list: 'bullet' }],
+                                ['link', 'image', 'video'],
+                                ['clean'], // Remove formatting
+                            ],
+                        }}
+                        formats={[
+                            'font',
+                            'size',
+                            'bold',
+                            'italic',
+                            'underline',
+                            'strike',
+                            'color',
+                            'background',
+                            'align',
+                            'blockquote',
+                            'code-block',
+                            'list',
+                            'bullet',
+                            'link',
+                            'image',
+                            'video',
+                        ]}
+                        className="w-full"
+                        style={{ minHeight: '250px' }}
+                />
                 </div>
+            </div>
+          <style>
+          {`
+            .ql-container {
+              border: none !important;
+            }
+          `}
+          </style>
 
-                {/* Body */}
-                <div className="field">
-                  <label>Body</label>
-                  <textarea
-                    rows="6"
-                    value={body}
-                    onChange={(e) => setBody(e.target.value)}
-                    placeholder="Write your email message here..."
-                  />
-                </div>
-
-                {/* Attachments */}
-                <label style={{ fontSize: "14px", fontWeight: 600 }}>
-                  Attachments
+            <div>
+                <label className="block text-sm font-medium mb-2" htmlFor="attachments">
+                    Attachments
                 </label>
                 <div
                   className={`file-upload ${isAttachActive ? "active" : ""}`}
