@@ -560,6 +560,7 @@ function SendEmail() {
           current: prev.current + 1,
           total: prev.total,
         }));
+        alert("Emails sent successfully!");
       } catch (error) {
         console.error("Error sending email to", email, error);
       }
