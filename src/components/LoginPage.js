@@ -261,7 +261,7 @@ function LoginPage() {
 
       if (response.data.message === "Login successful") {
         localStorage.setItem("userEmail", response.data.user.email);
-        navigate("/sendEmail");
+        navigate("/dashboard");
       } else {
         alert("Login failed. Please check your credentials.");
       }
