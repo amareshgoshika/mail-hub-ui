@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SendEmail from "../components/SendEmail";
 import CredentialGenerate from "../components/CredentialGenerate";
-import Profile from "../components/Profile";
 import AccountPage from "../components/AccountPage";
 
 const UserDashboard = () => {
@@ -12,7 +11,7 @@ const UserDashboard = () => {
 
   useEffect(() => {
     const userEmail = localStorage.getItem("userEmail");
-    if (userEmail == "null") {
+    if (userEmail === "null") {
       alert("Please login to continue");
       navigate("/login"); 
     }
@@ -21,7 +20,6 @@ const UserDashboard = () => {
   const pageComponents = {
     SendEmail: <SendEmail />,
     GenerateCredential: <CredentialGenerate />,
-    Profile: <Profile />,
     Account: <AccountPage />,
   };
 

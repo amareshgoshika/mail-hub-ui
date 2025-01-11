@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function AccountPage() {
   const [name, setName] = useState(null);
   const [password, setPassword] = useState(null);
   const [phone, setPhone] = useState(null);
-  const [credentials, setCredentials] = useState(null);
   const [formData, setFormData] = useState({
     email: "",
   });
-  const navigate = useNavigate();
 
   useEffect(() => {
     const senderEmail = localStorage.getItem("userEmail");
@@ -37,54 +34,9 @@ function AccountPage() {
       fetchUserDetails();
     }
     }, []);
-  
-  const handleInfoClick = () => {
-    navigate("/upload-credentials-info");
-  };
-
-  const handleFileChange = (e) => {
-    if (e.target.name === "credentials") {
-      setCredentials(e.target.files[0]);
-    }
-  };
-
-  const handleAuth = async () => {
-    const email = formData.email;
-    try {
-      const response = await axios.post(
-        process.env.REACT_APP_UPDATETOKEN_URL,
-        { email },
-        {
-          headers: { "Content-Type": "application/json" },
-          responseType: "json",
-        }
-      );
-      const authUrl = response.data.authUrl;
-      window.location.href = authUrl;
-    } catch (error) {
-      alert("Error initiating authentication: " + error.message);
-    }
-  };
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleFileSubmit = async (e) => {
-    e.preventDefault();
-    const formDataToSubmit = new FormData();
-    formDataToSubmit.append("credentials", credentials);
-    formDataToSubmit.append("email", formData.email);
-
-    try {
-      const response = await axios.post(
-        process.env.REACT_APP_UPLOAD_CREDENTIAL_URL,
-        formDataToSubmit
-      );
-      alert(response.data.message);
-    } catch (err) {
-      alert(`Error: ${err.response.data.error}`);
-    }
   };
 
   return (
@@ -143,45 +95,6 @@ function AccountPage() {
               className="mt-1 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-        </div>
-
-        <div className="mb-5">
-            <div className="flex items-center justify-between">
-              <label className="text-gray-700 font-medium">
-                Upload Credentials
-              </label>
-              <button
-                type="button"
-                onClick={handleInfoClick}
-                className="text-sm text-blue-600 hover:underline"
-              >
-                Info
-              </button>
-            </div>
-            <input
-              type="file"
-              name="credentials"
-              onChange={handleFileChange}
-              required
-              className="w-full mt-2 px-2 py-2 border rounded-md focus:outline-none"
-            />
-            <button
-              type="button"
-              onClick={handleFileSubmit}
-              className="mt-3 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
-            >
-              Upload
-            </button>
-          </div>
-
-        <div className="mb-5">
-        <button
-            type="button"
-            onClick={handleAuth}
-            className="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition-colors"
-        >
-            Generate Token
-        </button>
         </div>
 
         <div className="mb-6">
