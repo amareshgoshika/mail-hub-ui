@@ -114,11 +114,21 @@ function UploadCredentialsInfo() {
           <li>Application Type: Web Application.</li>
           <li>
             Authorized redirect URIs → Add URL →
-            <code className="bg-gray-100 rounded px-1">
-              https://mail-hub-api.onrender.com/callback
-            </code>{" "}
-            → Create and Download JSON.
-          </li>
+            <ul className="list-disc pl-6 mt-2">
+              <li>
+                <code className="bg-gray-100 rounded px-1">
+                  https://mail-hub-api.onrender.com/callback
+                </code>
+              </li>
+              <li>
+                <code className="bg-gray-100 rounded px-1">
+                  https://mailhub-api.netlify.app/dashboard
+                </code>
+              </li>
+            </ul>
+            </li>
+            <li>Create and Download JSON.</li>
+
         </ol>
       </div>
     </div>

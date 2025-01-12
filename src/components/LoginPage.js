@@ -261,7 +261,8 @@ function LoginPage() {
 
       if (response.data.message === "Login successful") {
         localStorage.setItem("userEmail", response.data.user.email);
-        navigate("/sendEmail");
+        localStorage.setItem("credits", response.data.user.credits);
+        navigate("/dashboard");
       } else {
         alert("Login failed. Please check your credentials.");
       }
