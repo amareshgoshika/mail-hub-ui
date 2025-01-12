@@ -1,10 +1,10 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client'; // Use react-dom/client for React 18
-import { BrowserRouter } from 'react-router-dom';
-import App from './App';
-import './index.css';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App";
+import "./index.css"; // Tailwind + your global styles
 
-const root = ReactDOM.createRoot(document.getElementById('root')); // Updated to createRoot
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
