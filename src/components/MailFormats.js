@@ -76,7 +76,9 @@ const MailFormats = ({ setCurrentPage }) => {
         setAttachments([]);
       }
     setSelectedFormat(format);
-    fileInputRef.current.value = null;
+    if (fileInputRef.current) {
+        fileInputRef.current.value = null;
+      }
     setIsCreating(false);
   };
 
@@ -164,7 +166,9 @@ const MailFormats = ({ setCurrentPage }) => {
         setSubject("");
         setBody("");
         setAttachments("");
-        fileInputRef.current.value = null;
+        if (fileInputRef.current) {
+            fileInputRef.current.value = null;
+        }
       } else {
         const data = await response.json();
         alert(`Error: ${data.message}`);
@@ -232,7 +236,9 @@ const MailFormats = ({ setCurrentPage }) => {
     setSubject("");
     setBody("");
     setAttachments("");
-    fileInputRef.current.value = null;
+    if (fileInputRef.current) {
+        fileInputRef.current.value = null;
+      }
   };
 
   return (
