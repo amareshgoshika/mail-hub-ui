@@ -8,10 +8,12 @@ import MailFormats from "../components/MailFormats";
 const UserDashboard = () => {
   const [currentPage, setCurrentPage] = useState("SendEmail");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [credits, setCredits] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const userEmail = localStorage.getItem("userEmail");
+    setCredits(localStorage.getItem("credits"));
     if (userEmail === "null") {
       alert("Please login to continue");
       navigate("/login"); 
@@ -21,13 +23,17 @@ const UserDashboard = () => {
   const pageComponents = {
     SendEmail: <SendEmail />,
     GenerateCredential: <CredentialGenerate />,
-    MailFormats: <MailFormats />,
+    MailFormats: <MailFormats  setCurrentPage={setCurrentPage} />,
     Account: <AccountPage />,
   };
 
   const handleLogout = () => {
     localStorage.setItem("userEmail", null);
     navigate("/");
+  };
+
+  const renderCurrentPage = () => {
+    return pageComponents[currentPage];
   };
 
   return (
@@ -57,7 +63,14 @@ const UserDashboard = () => {
             </li>
           ))}
         </ul>
-
+        <div className="p-4">
+          <div
+            className={`w-full text-white font-bold py-2 px-4 rounded-md ${
+              credits === '0' ? "bg-red-600" : "bg-green-600"
+            }`}
+  >            Available Credits: {credits}
+          </div>
+        </div>
         <div className="p-4">
           <button
             onClick={handleLogout}
@@ -96,7 +109,7 @@ const UserDashboard = () => {
           </svg>
         </button>
 
-        {pageComponents[currentPage]}
+        {renderCurrentPage()}
       </main>
     </div>
   );
