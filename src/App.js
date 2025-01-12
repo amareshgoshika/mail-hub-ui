@@ -5,9 +5,9 @@ import Home from "./pages/Home";
 import LoginPage from "./components/LoginPage";
 import UserRegistration from "./components/UserRegistration";
 import UploadCredentialsInfo from "./components/UploadCredentialsInfo";
-import NewMailFormat from "./components/NewMailFormat";
 import SendEmail from "./components/SendEmail";
 import CredentialGenerate from "./components/CredentialGenerate";
+import UserDashboard from "./pages/UserDashboard";
 
 function App() {
   return (
@@ -15,12 +15,12 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<UserRegistration />} />
+      <Route path="/dashboard" element={<UserDashboard />} />
       <Route path="/sendEmail" element={<SendEmail />} />
       <Route
         path="/upload-credentials-info"
         element={<UploadCredentialsInfo />}
       />
-      <Route path="/newMailFormat" element={<NewMailFormat />} />
       <Route path="/credentialGenerate" element={<CredentialGenerate />} />
     </Routes>
   );

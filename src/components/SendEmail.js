@@ -596,7 +596,7 @@ function SendEmail() {
 
     alert(summaryMessage);
     setSendingProgress(null);
-    navigate("/sendEmail");
+    navigate("/dashboard");
   };
 
   // ========================
