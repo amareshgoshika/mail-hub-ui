@@ -602,7 +602,7 @@ function SendEmail() {
   // ========================
   // MAIL FORMAT SELECT
   // ========================
-  const handleMailFormatChange = (e) => {
+  const handleMailFormatChange = async (e) => {
     const formatId = e.target.value;
     setSelectedOption(formatId);
 
@@ -610,6 +610,7 @@ function SendEmail() {
     if (!formatId) {
       setSubject("");
       setBody("");
+      setAttachments([]);
       return;
     }
 
@@ -619,6 +620,35 @@ function SendEmail() {
     if (selectedFormat) {
       setSubject(selectedFormat.subject);
       setBody(selectedFormat.body);
+
+      if (selectedFormat.attachmentURL) {
+        try {
+
+          const response = await fetch(selectedFormat.attachmentURL);
+          if (response.ok) {
+            const blob = await response.blob();
+            const decodedURL = decodeURIComponent(selectedFormat.attachmentURL);
+          
+            const urlPath = decodedURL.split('?')[0];
+            if (urlPath.includes('attachments/')) {
+              const fileRelativePath = urlPath.split('attachments/')[1];
+              const encodedFileName = fileRelativePath.substring(fileRelativePath.lastIndexOf('/') + 1);
+              const decodedFileName = decodeURIComponent(encodedFileName);
+              const file = new File([blob], decodedFileName, { type: blob.type });
+              setAttachments([file]);
+            } else {
+              console.error("The URL doesn't contain the expected 'attachments/' path.");
+            }
+          } else {
+            console.error("Failed to fetch attachment");
+          }
+          
+        } catch (error) {
+          console.error("Error fetching attachment:", error);
+        }
+      } else {
+        setAttachments([]);
+      }
     }
   };
 
@@ -859,6 +889,17 @@ function SendEmail() {
                   />
                 </div>
               </div>
+
+              {attachments.length > 0 && (
+                <div>
+                  <h4>Attachments:</h4>
+                  <ul>
+                    {attachments.map((file, index) => (
+                      <li key={index}>{file.name}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               <button
                 type="button"

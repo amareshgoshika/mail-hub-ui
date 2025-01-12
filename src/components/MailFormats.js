@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../firebase";
 import ReactQuill from 'react-quill';
 import axios from 'axios';
 import 'react-quill/dist/quill.snow.css';
@@ -10,7 +12,10 @@ const MailFormats = ({ setCurrentPage }) => {
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [userEmail, setUserEmail] = useState("");
+  const [attachments, setAttachments] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
+  const [file, setFile] = useState(null);
+  const fileInputRef = useRef(null)
   
   useEffect(() => {
     const senderEmail = localStorage.getItem("userEmail");
@@ -33,21 +38,78 @@ const MailFormats = ({ setCurrentPage }) => {
     }
   };
 
-  const handleFormatSelect = (format) => {
-    setSelectedFormat(format);
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleFormatSelect = async (format) => {
     setFormatName(format.formatName);
     setSubject(format.subject);
     setBody(format.body);
+
+    if (format.attachmentURL) {
+        try {
+
+          const response = await fetch(format.attachmentURL);
+          if (response.ok) {
+            const blob = await response.blob();
+            const decodedURL = decodeURIComponent(format.attachmentURL);
+          
+            const urlPath = decodedURL.split('?')[0];
+            if (urlPath.includes('attachments/')) {
+              const fileRelativePath = urlPath.split('attachments/')[1];
+              const encodedFileName = fileRelativePath.substring(fileRelativePath.lastIndexOf('/') + 1);
+              const decodedFileName = decodeURIComponent(encodedFileName);
+              const file = new File([blob], decodedFileName, { type: blob.type });
+              setAttachments([file]);
+            } else {
+              console.error("The URL doesn't contain the expected 'attachments/' path.");
+            }
+          } else {
+            console.error("Failed to fetch attachment");
+          }
+          
+        } catch (error) {
+          console.error("Error fetching attachment:", error);
+        }
+      } else {
+        setAttachments([]);
+      }
+    setSelectedFormat(format);
+    if (fileInputRef.current) {
+        fileInputRef.current.value = null;
+      }
     setIsCreating(false);
   };
 
   const handleUpdate = async () => {
+
+    if (!formatName || !subject || !body || !userEmail) {
+        alert("Please fill in all required fields");
+        return;
+      }
+  
+      let fileURL = null;
+  
+      if (file) {
+        try {
+          const fileRef = ref(storage, `attachments/${userEmail}/${formatName}/${file.name}`);
+          await uploadBytes(fileRef, file);
+          fileURL = await getDownloadURL(fileRef);
+        } catch (error) {
+          console.error("Error uploading file:", error);
+          alert("Failed to upload attachment.");
+          return;
+        }
+      }
+
     if (!selectedFormat) return;
     const updatedMailFormat = {
       formatName,
       subject,
       body,
       userEmail,
+      attachmentURL: fileURL,
     };
 
     try {
@@ -79,12 +141,19 @@ const MailFormats = ({ setCurrentPage }) => {
     if (!formatToDelete) return;
   
     const id = formatToDelete.id;
+    const attachementURLFile = formatToDelete.attachmentURL;
   
     try {
       const response = await fetch(
         `${process.env.REACT_APP_DELETE_MAIL_FORMATS_URL}?id=${id}`,
         {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            attachmentURL: attachementURLFile,
+          }),
         }
       );
       console.log(process.env.REACT_APP_DELETE_MAIL_FORMATS_URL);
@@ -96,6 +165,10 @@ const MailFormats = ({ setCurrentPage }) => {
         setFormatName("");
         setSubject("");
         setBody("");
+        setAttachments("");
+        if (fileInputRef.current) {
+            fileInputRef.current.value = null;
+        }
       } else {
         const data = await response.json();
         alert(`Error: ${data.message}`);
@@ -107,11 +180,32 @@ const MailFormats = ({ setCurrentPage }) => {
   };
 
   const handleSaveNewFormat = async () => {
+
+    if (!formatName || !subject || !body || !userEmail) {
+        alert("Please fill in all required fields");
+        return;
+      }
+  
+      let fileURL = null;
+  
+      if (file) {
+        try {
+          const fileRef = ref(storage, `attachments/${userEmail}/${formatName}/${file.name}`);
+          await uploadBytes(fileRef, file);
+          fileURL = await getDownloadURL(fileRef);
+        } catch (error) {
+          console.error("Error uploading file:", error);
+          alert("Failed to upload attachment.");
+          return;
+        }
+      }
+
     const mailFormat = {
         formatName,
         subject,
         body,
         userEmail,
+        attachmentURL: fileURL,
       };
   
       try {
@@ -141,6 +235,10 @@ const MailFormats = ({ setCurrentPage }) => {
     setFormatName("");
     setSubject("");
     setBody("");
+    setAttachments("");
+    if (fileInputRef.current) {
+        fileInputRef.current.value = null;
+      }
   };
 
   return (
@@ -283,6 +381,18 @@ const MailFormats = ({ setCurrentPage }) => {
                 </div>
               </div>
 
+            <div className="mb-6">
+                <label className="block text-gray-700 mb-2">Attachment</label>
+                <input
+                type="file"
+                name="attachments"
+                onChange={handleFileChange}
+                required
+                className="w-full px-2 py-2 border rounded-md"
+                ref={fileInputRef}
+                />
+            </div>
+
               <div className="flex justify-between">
                 <button
                   type="button"
@@ -379,6 +489,30 @@ const MailFormats = ({ setCurrentPage }) => {
                   />
                 </div>
               </div>
+
+
+            <div className="mb-6">
+                <label className="block text-gray-700 mb-2">Attachment</label>
+                <input
+                type="file"
+                name="attachments"
+                onChange={handleFileChange}
+                required
+                className="w-full px-2 py-2 border rounded-md"
+                ref={fileInputRef}
+                />
+            </div>
+
+            {attachments.length > 0 && (
+                <div>
+                  <h4>Attachments:</h4>
+                  <ul>
+                    {attachments.map((file, index) => (
+                      <li key={index}>{file.name}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               <div className="flex justify-between">
                 <button
