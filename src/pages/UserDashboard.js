@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import SendEmail from "../components/SendEmail";
 import CredentialGenerate from "../components/CredentialGenerate";
 import AccountPage from "../components/AccountPage";
+import MailFormats from "../components/MailFormats";
 
 const UserDashboard = () => {
   const [currentPage, setCurrentPage] = useState("SendEmail");
@@ -20,6 +21,7 @@ const UserDashboard = () => {
   const pageComponents = {
     SendEmail: <SendEmail />,
     GenerateCredential: <CredentialGenerate />,
+    MailFormats: <MailFormats />,
     Account: <AccountPage />,
   };
 
