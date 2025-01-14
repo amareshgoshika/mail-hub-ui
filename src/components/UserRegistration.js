@@ -1,242 +1,11 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-
-/**
- * Inline CSS with bubble background, dark mode, and
- * form styling to match the rest of your UI.
- */
-const inlineStyles = `
-/* RESET & BASE */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow-x: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, 
-    "Helvetica Neue", Ubuntu, sans-serif;
-}
-
-/* Light vs. Dark containers */
-.light-body,
-.dark-body {
-  min-height: 100vh;
-  position: relative;
-  width: 100%;
-}
-
-/* Light background vs. Dark background */
-.light-body {
-  background: linear-gradient(to right, #f3f4f6, #e9ecf3);
-}
-.dark-body {
-  background: #1f2937;
-}
-
-/* Bubbles behind the form */
-.bubble-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  min-height: 100%;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-}
-.bubble {
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.15;
-}
-.bubble1 {
-  width: 350px;
-  height: 350px;
-  background-color: #98c1d9;
-  top: -120px;
-  left: -120px;
-}
-.bubble2 {
-  width: 200px;
-  height: 200px;
-  background-color: #f2cc8f;
-  bottom: -60px;
-  right: -60px;
-}
-.bubble3 {
-  width: 300px;
-  height: 300px;
-  background-color: #dad7cd;
-  top: 30%;
-  left: 80%;
-  transform: translate(-50%, -50%);
-}
-.bubble4 {
-  width: 300px;
-  height: 300px;
-  background-color: #bbd0ff;
-  bottom: 20%;
-  left: -100px;
-}
-.bubble5 {
-  width: 250px;
-  height: 250px;
-  background-color: #f9c6d4;
-  top: 65%;
-  right: 10%;
-  transform: translateY(-50%);
-}
-
-/* Dark mode toggle button */
-.darkmode-toggle {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  background-color: #5469d4;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  box-shadow:
-    rgba(0, 0, 0, 0.12) 0px 1px 1px 0px,
-    #5469d4 0px 0px 0px 1px,
-    rgba(60, 66, 87, 0.08) 0px 2px 5px 0px;
-  transition: background-color 0.2s ease-in-out, transform 0.3s ease;
-  z-index: 999;
-}
-.darkmode-toggle:hover {
-  background-color: #4458b3;
-  transform: scale(1.05);
-}
-
-/* Registration wrapper */
-.registration-wrapper {
-  position: relative;
-  z-index: 1; /* so it's above the bubbles */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding-top: 40px;
-  padding-bottom: 40px;
-}
-
-/* Registration container (card) */
-.registration-container {
-  width: 100%;
-  max-width: 450px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow:
-    0 4px 6px rgba(0, 0, 0, 0.1),
-    0 2px 4px rgba(0, 0, 0, 0.06);
-  padding: 24px;
-}
-.dark-body .registration-container {
-  background-color: #2d3748; 
-  color: #f1f5f9;
-  border: 1px solid #5e6672; /* a visible border in dark mode */
-}
-
-/* Registration title */
-.registration-title {
-  text-align: center;
-  margin-bottom: 24px;
-}
-.registration-title h2 {
-  font-size: 24px;
-  font-weight: 700;
-  color: #333;
-}
-.dark-body .registration-title h2 {
-  color: #fff;
-}
-
-/* Form fields */
-.field {
-  margin-bottom: 16px;
-}
-.field label {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: #333;
-}
-.dark-body .field label {
-  color: #cbd5e1;
-}
-.field input[type="text"],
-.field input[type="email"],
-.field input[type="tel"],
-.field input[type="password"] {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 4px;
-  border: 1px solid #e3e8ee;
-  outline-color: rgba(84, 105, 212, 0.5);
-  background-color: #fff;
-  color: #333;
-  font-size: 14px;
-}
-.dark-body .field input[type="text"],
-.dark-body .field input[type="email"],
-.dark-body .field input[type="tel"],
-.dark-body .field input[type="password"] {
-  background-color: #4a5568;
-  border: 1px solid #5e6672;
-  color: #f1f5f9;
-}
-
-/* Submit button */
-.submit-button {
-  background-color: #5469d4;
-  color: #fff;
-  width: 100%;
-  font-size: 14px;
-  font-weight: 600;
-  padding: 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  text-align: center;
-  transition: background-color 0.2s ease-in-out;
-  box-shadow:
-    rgba(0, 0, 0, 0.12) 0px 1px 1px 0px,
-    #5469d4 0px 0px 0px 1px,
-    rgba(60, 66, 87, 0.08) 0px 2px 5px 0px;
-}
-.submit-button:hover {
-  background-color: #4458b3;
-}
-`;
+import { Mail, Lock, User, Phone, ArrowRight } from 'lucide-react';
 
 function UserRegistration() {
   const navigate = useNavigate();
 
-  // ======================
-  // THEME (DARK/LIGHT)
-  // ======================
-  const [darkMode, setDarkMode] = useState(() => {
-    // Initialize from localStorage
-    const storedTheme = localStorage.getItem("darkMode");
-    return storedTheme === "true";
-  });
-
-  // Toggle and persist in localStorage
-  const toggleDarkMode = () => {
-    setDarkMode((prev) => {
-      localStorage.setItem("darkMode", (!prev).toString());
-      return !prev;
-    });
-  };
-
-  // ======================
-  // FORM FIELDS
-  // ======================
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -275,89 +44,158 @@ function UserRegistration() {
       }
     }
   };
-
   return (
-    <>
-      <style>{inlineStyles}</style>
-      <div className={darkMode ? "dark-body" : "light-body"}>
-        {/* Dark/Light Mode Toggle Button */}
-        <button className="darkmode-toggle" onClick={toggleDarkMode}>
-          {darkMode ? "Light Mode" : "Dark Mode"}
-        </button>
+  <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 pt-20 flex items-center justify-center px-4 py-8">
+      <div className="max-w-md w-full">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-900">Create your account</h2>
+            <p className="text-gray-600 mt-2">Join thousands of satisfied users today</p>
+          </div>
 
-        {/* Bubble container */}
-        <div className="bubble-container">
-          <div className="bubble bubble1" />
-          <div className="bubble bubble2" />
-          <div className="bubble bubble3" />
-          <div className="bubble bubble4" />
-          <div className="bubble bubble5" />
-        </div>
-
-        {/* Main wrapper */}
-        <div className="registration-wrapper">
-          <div className="registration-container">
-            <div className="registration-title">
-              <h2>User Registration</h2>
-            </div>
-            <form onSubmit={handleSubmit}>
-              {/* Name */}
-              <div className="field">
-                <label>Name</label>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                Full Name
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <User className="h-5 w-5 text-gray-400" />
+                </div>
                 <input
-                  type="text"
+                  id="name"
                   name="name"
+                  type="text"
                   value={formData.name}
                   onChange={handleInputChange}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
+                  placeholder="John Doe"
                   required
                 />
               </div>
+            </div>
 
-              {/* Email */}
-              <div className="field">
-                <label>Email</label>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-gray-400" />
+                </div>
                 <input
-                  type="email"
+                  id="email"
                   name="email"
+                  type="email"
                   value={formData.email}
                   onChange={handleInputChange}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
+                  placeholder="john@example.com"
                   required
                 />
               </div>
+            </div>
 
-              {/* Phone */}
-              <div className="field">
-                <label>Phone</label>
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                Phone Number
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Phone className="h-5 w-5 text-gray-400" />
+                </div>
                 <input
-                  type="tel"
+                  id="phone"
                   name="phone"
+                  type="tel"
                   value={formData.phone}
                   onChange={handleInputChange}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
+                  placeholder="+1 (555) 000-0000"
                   required
                 />
               </div>
+            </div>
 
-              {/* Password */}
-              <div className="field">
-                <label>Password</label>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-gray-400" />
+                </div>
                 <input
-                  type="password"
+                  id="password"
                   name="password"
+                  type="password"
                   value={formData.password}
                   onChange={handleInputChange}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
+                  placeholder="••••••••"
                   required
                 />
               </div>
+            </div>
 
-              {/* Submit */}
-              <button type="submit" className="submit-button">
-                Submit
-              </button>
-            </form>
-          </div>
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center mt-4">
+              <input
+                id="terms"
+                type="checkbox"
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-600 border-gray-300 rounded"
+                required
+              />
+              <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
+                I agree to the{' '}
+                <Link to="" className="text-indigo-600 hover:text-indigo-500">
+                  Terms of Service
+                </Link>{' '}
+                and{' '}
+                <Link to="" className="text-indigo-600 hover:text-indigo-500">
+                  Privacy Policy
+                </Link>
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 mt-6"
+            >
+              Create Account
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </form>
+
+          <p className="mt-6 text-center text-sm text-gray-600">
+            Already have an account?{' '}
+            <Link to="/login" className="text-indigo-600 hover:text-indigo-500 font-medium">
+              Sign in
+            </Link>
+          </p>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
