@@ -11,20 +11,6 @@ export function Navbar() {
             <Mail className="w-8 h-8 text-indigo-600" />
             <span className="text-2xl font-bold text-gray-800">MailEasy</span>
           </Link>
-          <div className="flex gap-4">
-            <Link
-              to="/login"
-              className="w-full sm:w-auto border-2 border-indigo-600 text-indigo-600 px-6 py-2 rounded-lg hover:bg-indigo-50 transition-colors"
-            >
-              Login
-            </Link>
-            <Link
-              to="/register"
-              className="w-full sm:w-auto bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
-            >
-              Get Started
-            </Link>
-          </div>
         </div>
       </div>
     </nav>

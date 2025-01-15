@@ -9,17 +9,20 @@ import CredentialGenerate from "./components/CredentialGenerate";
 import UserDashboard from "./pages/UserDashboard";
 import Home from "./pages/Home";
 import { Navbar } from "./components/NavBar";
+import MailFormats from "./components/MailFormats";
 
 function App() {
   return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 pt-20">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 pt-20 ">
         <Navbar />
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<UserDashboard />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<UserRegistration />} />
-      <Route path="/dashboard" element={<UserDashboard />} />
+      <Route path="/home" element={<Home />} />
       <Route path="/sendEmail" element={<SendEmail />} />
+      <Route path="/mailformats" element={<MailFormats />} />
+
       <Route
         path="/upload-credentials-info"
         element={<UploadCredentialsInfo />}
