@@ -70,10 +70,10 @@ function CredentialGenerate() {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-gray-100 to-gray-200 px-4">
-      <div className="bg-white w-full max-w-md rounded-lg shadow-lg p-6">
-        <h2 className="text-2xl font-semibold text-center mb-6">
-          User Registration
+    <div className="min-h-screen items-center bg-white px-4">
+      <div className="bg-white w-full max-w-md rounded-lg p-6">
+        <h2 className="text-2xl font-semibold mb-6">
+          Generate Token
         </h2>
         <form>
           <div className="mb-5">

@@ -40,10 +40,9 @@ function AccountPage() {
   };
 
   return (
-    <div className="container mx-auto p-8 bg-gray-100">
-      <div className="max-w-2xl mx-auto bg-white p-24 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-center mb-6">Account Settings</h2>
-
+    <div className="min-h-screen items-center bg-white px-4">
+      <div className="bg-white w-full max-w-md rounded-lg p-6">
+        <h2 className="text-2xl font-bold mb-6">Account Settings</h2>
         <div className="space-y-4 mb-6">
           <div>
             <label htmlFor="name" className="block text-sm font-semibold">

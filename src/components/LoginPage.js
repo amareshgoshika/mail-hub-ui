@@ -1,245 +1,13 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Mail, Lock, ArrowRight } from 'lucide-react';
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-
-/**
- * Inline styles with bubble background
- */
-const inlineStyles = `
-/* Reset default browser margins/padding */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow-x: hidden;
-}
-
-/* Light vs. Dark top-level containers */
-.light-body,
-.dark-body {
-  min-height: 100vh;
-  position: relative;
-  width: 100%;
-}
-
-/* Light background vs. Dark background */
-.light-body {
-  background: linear-gradient(to right, #f3f4f6, #e9ecf3);
-}
-.dark-body {
-  background: #1f2937;
-}
-
-/* Bubble container (same as WelcomePage) */
-.bubble-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  min-height: 100%;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-}
-
-/* Bubble styling */
-.bubble {
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.15;
-}
-.bubble1 {
-  width: 350px;
-  height: 350px;
-  background-color: #98c1d9;
-  top: -120px;
-  left: -120px;
-}
-.bubble2 {
-  width: 200px;
-  height: 200px;
-  background-color: #f2cc8f;
-  bottom: -60px;
-  right: -60px;
-}
-.bubble3 {
-  width: 300px;
-  height: 300px;
-  background-color: #dad7cd;
-  top: 30%;
-  left: 80%;
-  transform: translate(-50%, -50%);
-}
-.bubble4 {
-  width: 300px;
-  height: 300px;
-  background-color: #bbd0ff;
-  bottom: 20%;
-  left: -100px;
-}
-.bubble5 {
-  width: 250px;
-  height: 250px;
-  background-color: #f9c6d4;
-  top: 65%;
-  right: 10%;
-  transform: translateY(-50%);
-}
-
-/* Dark mode toggle button (same style) */
-.darkmode-toggle {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  background-color: #5469d4;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  box-shadow:
-    rgba(0, 0, 0, 0.12) 0px 1px 1px 0px,
-    #5469d4 0px 0px 0px 1px,
-    rgba(60, 66, 87, 0.08) 0px 2px 5px 0px;
-  transition: background-color 0.2s ease-in-out, transform 0.3s ease;
-  z-index: 999;
-}
-.darkmode-toggle:hover {
-  background-color: #4458b3;
-  transform: scale(1.05);
-}
-
-/* Login container */
-.login-container {
-  position: relative;
-  z-index: 1; /* Make sure it’s above the bubbles */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
-
-/* Login card styling */
-.login-card {
-  background: #ffffff;
-  border-radius: 8px;
-  max-width: 400px;
-  width: 90%;
-  padding: 32px;
-  box-shadow:
-    0 4px 12px rgba(0,0,0,0.08),
-    0 2px 4px rgba(0,0,0,0.06);
-}
-.dark-body .login-card {
-  background: #2d3748; /* Dark form container */
-  color: #f1f5f9;
-}
-
-/* Form headings */
-.login-card h2 {
-  margin-top: 0;
-  margin-bottom: 24px;
-  font-size: 24px;
-  font-weight: 700;
-  text-align: center;
-  color: #333;
-}
-.dark-body .login-card h2 {
-  color: #fff;
-}
-
-/* Labels */
-.login-card label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: 600;
-}
-.dark-body .login-card label {
-  color: #cbd5e1;
-}
-
-/* Inputs */
-.login-card input[type="email"],
-.login-card input[type="password"] {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 16px;
-  font-size: 14px;
-  border: none;
-  border-radius: 4px;
-  outline-color: rgba(84, 105, 212, 0.5);
-  background-color: #fff;
-  box-shadow: rgba(60, 66, 87, 0.16) 0px 0px 0px 1px;
-}
-.dark-body .login-card input[type="email"],
-.dark-body .login-card input[type="password"] {
-  background-color: #4a5568;
-  color: #f1f5f9;
-  box-shadow: none;
-}
-
-/* Submit button */
-.login-card button[type="submit"] {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  background-color: #5469d4;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-  box-shadow:
-    rgba(0, 0, 0, 0.12) 0px 1px 1px 0px,
-    #5469d4 0px 0px 0px 1px,
-    rgba(60, 66, 87, 0.08) 0px 2px 5px 0px;
-}
-.login-card button[type="submit"]:hover {
-  background-color: #4458b3;
-}
-
-/* Additional links */
-.links-container {
-  margin-top: 16px;
-  text-align: center;
-}
-.links-container a {
-  color: #5469d4;
-  text-decoration: none;
-  font-size: 14px;
-}
-.dark-body .links-container a {
-  color: #9faafa;
-}
-.links-container a:hover {
-  text-decoration: underline;
-}
-`;
 
 function LoginPage() {
   const navigate = useNavigate();
 
-  // Read theme from localStorage on mount:
-  const [darkMode, setDarkMode] = useState(() => {
-    const storedTheme = localStorage.getItem("darkMode");
-    return storedTheme === "true";
-  });
-
   const [formData, setFormData] = useState({ email: "", password: "" });
 
-  // Toggle dark mode + store in localStorage
-  const toggleDarkMode = () => {
-    setDarkMode((prev) => {
-      localStorage.setItem("darkMode", (!prev).toString());
-      return !prev;
-    });
-  };
-
-  // Handle input changes
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -262,7 +30,7 @@ function LoginPage() {
       if (response.data.message === "Login successful") {
         localStorage.setItem("userEmail", response.data.user.email);
         localStorage.setItem("credits", response.data.user.credits);
-        navigate("/dashboard");
+        navigate("/");
       } else {
         alert("Login failed. Please check your credentials.");
       }
@@ -277,81 +45,92 @@ function LoginPage() {
     }
   };
 
-  // Forgot password
-  const handleForgotPassword = () => {
-    alert("Forgot password flow goes here.");
-  };
-
-  // Handle sign up
-  const handleSignUp = () => {
-    navigate("/register");
-  };
-
   return (
-    <>
-      {/* Inject bubble and form styles */}
-      <style>{inlineStyles}</style>
-
-      <div className={darkMode ? "dark-body" : "light-body"}>
-        {/* Dark/Light Mode Toggle Button */}
-        <button className="darkmode-toggle" onClick={toggleDarkMode}>
-          {darkMode ? "Light Mode" : "Dark Mode"}
-        </button>
-
-        {/* Bubble container behind everything */}
-        <div className="bubble-container">
-          <div className="bubble bubble1" />
-          <div className="bubble bubble2" />
-          <div className="bubble bubble3" />
-          <div className="bubble bubble4" />
-          <div className="bubble bubble5" />
-        </div>
-
-        {/* Main login area */}
-        <div className="login-container">
-          <div className="login-card">
-            <h2>Sign In</h2>
-            <form onSubmit={handleSubmit}>
-              <label htmlFor="email">Email</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-
-              <label htmlFor="password">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-
-              <button type="submit">Log In</button>
-            </form>
-
-            <div className="links-container">
-              <p>
-                <a href="#!" onClick={handleForgotPassword}>
-                  Forgot your password?
-                </a>
-              </p>
-              <p>
-                Don’t have an account?{" "}
-                <a href="#!" onClick={handleSignUp}>
-                  Sign up
-                </a>
-              </p>
-            </div>
+    <div className="min-h-screen bg-white flex justify-center px-4">
+      <div className="max-w-md w-full">
+        <div className="bg-white p-8">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-900">Welcome back</h2>
+            <p className="text-gray-600 mt-2">Please enter your details to sign in</p>
           </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  type="checkbox"
+                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-600 border-gray-300 rounded"
+                />
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                  Remember me
+                </label>
+              </div>
+              <Link to="/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-500">
+                Forgot password?
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
+            >
+              Sign in
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </form>
+
+          <p className="mt-6 text-center text-sm text-gray-600">
+            Don't have an account?{' '}
+            <Link to="/register" className="text-indigo-600 hover:text-indigo-500 font-medium">
+              Sign up for free
+            </Link>
+          </p>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

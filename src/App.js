@@ -1,28 +1,35 @@
 // src/App.js
 import React from "react";
-import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
+import { Routes, Route } from 'react-router-dom';
 import LoginPage from "./components/LoginPage";
 import UserRegistration from "./components/UserRegistration";
 import UploadCredentialsInfo from "./components/UploadCredentialsInfo";
 import SendEmail from "./components/SendEmail";
 import CredentialGenerate from "./components/CredentialGenerate";
 import UserDashboard from "./pages/UserDashboard";
+import Home from "./pages/Home";
+import { Navbar } from "./components/NavBar";
+import MailFormats from "./components/MailFormats";
 
 function App() {
   return (
+      <div className="min-h-screen bg-white pt-20 ">
+        <Navbar />
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<UserDashboard />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<UserRegistration />} />
-      <Route path="/dashboard" element={<UserDashboard />} />
+      <Route path="/home" element={<Home />} />
       <Route path="/sendEmail" element={<SendEmail />} />
+      <Route path="/mailformats" element={<MailFormats />} />
+
       <Route
         path="/upload-credentials-info"
         element={<UploadCredentialsInfo />}
       />
       <Route path="/credentialGenerate" element={<CredentialGenerate />} />
     </Routes>
+      </div>
   );
 }
 

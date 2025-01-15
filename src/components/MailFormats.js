@@ -242,8 +242,8 @@ const MailFormats = ({ setCurrentPage }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex">
-      <div className="w-1/3 bg-white p-6 shadow-md rounded-md">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col lg:flex-row">
+      <div className="lg:w-1/3 w-full bg-white p-6 shadow-md rounded-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Mail Formats</h2>
         <div className="mb-4">
             <button
@@ -301,7 +301,7 @@ const MailFormats = ({ setCurrentPage }) => {
         </div>
       </div>
 
-      <div className="w-2/3 bg-white p-6 shadow-md rounded-md">
+      <div className="lg:w-2/3 w-full bg-white p-6 shadow-md rounded-md">
         {isCreating ? (
           <>
             <h2 className="text-2xl font-bold mb-6 text-center">New Mail Format</h2>

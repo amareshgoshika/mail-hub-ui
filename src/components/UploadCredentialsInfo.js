@@ -122,7 +122,7 @@ function UploadCredentialsInfo() {
               </li>
               <li>
                 <code className="bg-gray-100 rounded px-1">
-                  https://mailhub-api.netlify.app/dashboard
+                  https://mailhub-api.netlify.app/
                 </code>
               </li>
             </ul>
