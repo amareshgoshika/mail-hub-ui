@@ -13,7 +13,7 @@ import MailFormats from "./components/MailFormats";
 
 function App() {
   return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 pt-20 ">
+      <div className="min-h-screen bg-white pt-20 ">
         <Navbar />
     <Routes>
       <Route path="/" element={<UserDashboard />} />

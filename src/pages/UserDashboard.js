@@ -4,7 +4,7 @@ import SendEmail from "../components/SendEmail";
 import CredentialGenerate from "../components/CredentialGenerate";
 import AccountPage from "../components/AccountPage";
 import MailFormats from "../components/MailFormats";
-import { Credits } from "../components/Credits";
+import { Mail, Key, FileText, Users, CreditCard, LogOut } from 'lucide-react';
 
 const UserDashboard = () => {
   const [currentPage, setCurrentPage] = useState("SendEmail");
@@ -18,8 +18,16 @@ const UserDashboard = () => {
     GenerateCredential: <CredentialGenerate />,
     MailFormats: <MailFormats setCurrentPage={setCurrentPage} />,
     Account: <AccountPage />,
-    Credits: <Credits />,
   }), []);
+
+  const tabIcons = {
+    SendEmail: <Mail />,
+    GenerateCredential: <Key />,
+    MailFormats: <FileText />,
+    Account: <Users />,
+    Credits: <CreditCard />,
+    Logout: <LogOut />,
+  };
 
   useEffect(() => {
     const userEmail = localStorage.getItem("userEmail");
@@ -44,7 +52,6 @@ const UserDashboard = () => {
 
   const handleTabClick = (page) => {
     setCurrentPage(page);
-    // Update the URL with the selected tab using the 'tab' query parameter
     navigate(`/?tab=${page}`);
   };
 
@@ -68,7 +75,10 @@ const UserDashboard = () => {
               }`}
               onClick={() => handleTabClick(page)}
             >
+            <span className="flex items-center">
+              <span className="mr-2">{tabIcons[page]}</span>
               {page}
+            </span>
             </li>
           ))}
         </ul>
@@ -86,7 +96,10 @@ const UserDashboard = () => {
             onClick={handleLogout}
             className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md"
           >
-            Logout
+              <span className="flex items-center">
+              <span className="mr-2">{tabIcons['Logout']}</span>
+              Logout
+            </span>
           </button>
         </div>
       </nav>
