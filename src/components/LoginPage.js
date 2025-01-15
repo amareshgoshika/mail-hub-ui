@@ -30,7 +30,7 @@ function LoginPage() {
       if (response.data.message === "Login successful") {
         localStorage.setItem("userEmail", response.data.user.email);
         localStorage.setItem("credits", response.data.user.credits);
-        navigate("/dashboard");
+        navigate("/");
       } else {
         alert("Login failed. Please check your credentials.");
       }
@@ -46,9 +46,9 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 pt-20 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-white flex justify-center px-4">
       <div className="max-w-md w-full">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white p-8">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-gray-900">Welcome back</h2>
             <p className="text-gray-600 mt-2">Please enter your details to sign in</p>

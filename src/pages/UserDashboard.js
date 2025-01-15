@@ -1,35 +1,58 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useMemo } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import SendEmail from "../components/SendEmail";
 import CredentialGenerate from "../components/CredentialGenerate";
 import AccountPage from "../components/AccountPage";
 import MailFormats from "../components/MailFormats";
+import { Mail, Key, FileText, Users, CreditCard, LogOut } from 'lucide-react';
 
 const UserDashboard = () => {
   const [currentPage, setCurrentPage] = useState("SendEmail");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [credits, setCredits] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const pageComponents = useMemo(() => ({
+    SendEmail: <SendEmail />,
+    GenerateCredential: <CredentialGenerate />,
+    MailFormats: <MailFormats setCurrentPage={setCurrentPage} />,
+    Account: <AccountPage />,
+  }), []);
+
+  const tabIcons = {
+    SendEmail: <Mail />,
+    GenerateCredential: <Key />,
+    MailFormats: <FileText />,
+    Account: <Users />,
+    Credits: <CreditCard />,
+    Logout: <LogOut />,
+  };
 
   useEffect(() => {
     const userEmail = localStorage.getItem("userEmail");
     setCredits(localStorage.getItem("credits"));
     if (userEmail === "null") {
       alert("Please login to continue");
-      navigate("/login"); 
+      navigate("/home"); 
     }
-  }, [navigate]);
 
-  const pageComponents = {
-    SendEmail: <SendEmail />,
-    GenerateCredential: <CredentialGenerate />,
-    MailFormats: <MailFormats  setCurrentPage={setCurrentPage} />,
-    Account: <AccountPage />,
-  };
+    const params = new URLSearchParams(location.search);
+    const tab = params.get("tab");
+    if (tab && pageComponents[tab]) {
+      setCurrentPage(tab);
+    }
+
+  }, [navigate, location, pageComponents]);
 
   const handleLogout = () => {
     localStorage.setItem("userEmail", null);
-    navigate("/");
+    navigate("/home");
+  };
+
+  const handleTabClick = (page) => {
+    setCurrentPage(page);
+    navigate(`/?tab=${page}`);
   };
 
   const renderCurrentPage = () => {
@@ -39,27 +62,23 @@ const UserDashboard = () => {
   return (
     <div className="flex h-screen">
       <nav
-        className={`fixed inset-y-0 left-0 z-50 transform bg-gray-800 text-white w-64 transition-transform ${
+        className={`fixed inset-y-0 left-0 z-50 mt-20 transform bg-white/80 text-black w-64 transition-transform h-screen overflow-y-auto ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0`}
       >
-        <div className="p-4 bg-gray-900 text-center text-lg font-bold uppercase">
-          MailHUb
-        </div>
-
         <ul className="space-y-4 p-4">
           {Object.keys(pageComponents).map((page) => (
             <li
               key={page}
               className={`cursor-pointer p-2 rounded-md ${
-                currentPage === page ? "bg-gray-600" : "hover:bg-gray-700"
+                currentPage === page ? "bg-gray-200" : "hover:bg-gray-300"
               }`}
-              onClick={() => {
-                setCurrentPage(page);
-                setIsSidebarOpen(false);
-              }}
+              onClick={() => handleTabClick(page)}
             >
+            <span className="flex items-center">
+              <span className="mr-2">{tabIcons[page]}</span>
               {page}
+            </span>
             </li>
           ))}
         </ul>
@@ -68,7 +87,8 @@ const UserDashboard = () => {
             className={`w-full text-white font-bold py-2 px-4 rounded-md ${
               credits === '0' ? "bg-red-600" : "bg-green-600"
             }`}
-  >            Available Credits: {credits}
+            >            
+            Available Credits: {credits}
           </div>
         </div>
         <div className="p-4">
@@ -76,7 +96,10 @@ const UserDashboard = () => {
             onClick={handleLogout}
             className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md"
           >
-            Logout
+              <span className="flex items-center">
+              <span className="mr-2">{tabIcons['Logout']}</span>
+              Logout
+            </span>
           </button>
         </div>
       </nav>
@@ -88,7 +111,7 @@ const UserDashboard = () => {
         ></div>
       )}
 
-      <main className="flex-1 ml-0 lg:ml-64 p-8 bg-gray-100">
+      <main className="flex-1 ml-0 lg:ml-64 bg-gray-100">
         <button
           className="p-2 text-gray-800 bg-gray-200 rounded-md lg:hidden"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
