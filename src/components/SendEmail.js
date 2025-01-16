@@ -30,7 +30,7 @@ function SendEmail() {
     if (senderEmail) {
       setUserEmail(senderEmail);
     } else {
-      window.location.href = "/login";
+      window.location.href = "/home";
     }
 
     const fetchMailFormats = async () => {
