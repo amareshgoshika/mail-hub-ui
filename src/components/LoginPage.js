@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Mail, Lock, ArrowRight } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Loader } from 'lucide-react';
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 
@@ -7,6 +7,7 @@ function LoginPage() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -20,6 +21,7 @@ function LoginPage() {
     e.preventDefault();
     const { email, password } = formData;
 
+    setLoading(true);
     try {
       // Replace with your actual login endpoint
       const response = await axios.post(process.env.REACT_APP_LOGIN_URL, {
@@ -42,6 +44,8 @@ function LoginPage() {
       } else {
         alert("Error: " + error.message);
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -115,10 +119,22 @@ function LoginPage() {
 
             <button
               type="submit"
-              className="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
+              className={`w-full px-4 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                loading ? "bg-gray-400 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700 text-white"
+              }`}
+              disabled={loading}
             >
-              Sign in
-              <ArrowRight className="w-5 h-5" />
+              {loading ? (
+                <>
+                  <Loader className="w-5 h-5 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                <>
+                  Sign in
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              )}
             </button>
           </form>
 

@@ -4,12 +4,14 @@ import axios from 'axios';
 import Papa from 'papaparse';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { Loader } from 'lucide-react';
 
 function SendEmail() {
   const navigate = useNavigate();
   const csvInputRef = useRef(null);
   const [, setCsvFileName] = useState("No file chosen...");
   const [, setIsCSVActive] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const attachInputRef = useRef(null);
   const [, setAttachFileNames] = useState("No file chosen...");
@@ -94,6 +96,7 @@ function SendEmail() {
     }
 
     setSendingProgress({ current: 0, total: emailsToSend.length });
+    setLoading(true);
 
     let successCount = 0;
     let failedEmails = [];
@@ -150,6 +153,7 @@ function SendEmail() {
 
     alert(summaryMessage);
     setSendingProgress(null);
+    setLoading(false);
     navigate("/");
   };
 
@@ -288,17 +292,28 @@ function SendEmail() {
               <div className="flex items-center space-x-4 mt-4">
                 <button
                   type="button"
-                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+                  className="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
                   onClick={handleReset}
                 >
                   Reset
                 </button>
                 <button
                   type="button"
-                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                  className={`w-full px-4 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                    loading ? "bg-gray-400 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                  }`}
                   onClick={handleSendEmails}
                 >
+                  {loading ? (
+                <>
+                  <Loader className="w-5 h-5 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                <>
                   Send
+                </>
+              )}
                 </button>
               </div>
               {sendingProgress && (
