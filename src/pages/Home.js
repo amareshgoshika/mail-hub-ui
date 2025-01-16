@@ -1,11 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 import { Mail, Users, Zap, Shield, ArrowRight, CheckCircle2, Star } from 'lucide-react';
 
 
 function Home() {
+  const [plans, setPlans] = useState([]);
     const navigate = useNavigate();
     const handleLogin = () => navigate("/login");
+
+    const fetchPricingPlans = async () => {
+      try {
+        const response = await axios.get(process.env.REACT_APP_FETCH_PRICING_PLANS_URL
+        );
+        const plansArray = Object.values(response.data.pricingPlans);
+        setPlans(plansArray);
+      } catch (error) {
+        console.error("Error fetching mail formats:", error);
+      }
+    };
+
+    useEffect(() => {
+      fetchPricingPlans();
+    }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 pt-20">
@@ -80,7 +97,7 @@ function Home() {
         </div>
       </div>
 
-      {/* Pricing Section */}
+{/* Pricing Section */}
       <div className="container mx-auto px-4 py-16 md:py-24">
         <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-4">
           Simple, Transparent Pricing
@@ -89,95 +106,47 @@ function Home() {
           Choose the perfect plan for your email marketing needs. All plans include our core features.
         </p>
         <div className="grid md:grid-cols-3 gap-8">
-          {/* Basic Plan */}
-          <div className="bg-white p-8 rounded-2xl shadow-lg border-2 border-transparent hover:border-indigo-100 transition-all">
-            <h3 className="text-xl font-semibold mb-2">Basic</h3>
-            <div className="mb-6">
-              <span className="text-4xl font-bold">$9</span>
-              <span className="text-gray-600">/month</span>
+          {plans.map((plan) => (
+            <div
+              key={plan.name}
+              className={`p-8 rounded-2xl shadow-lg ${
+                plan.name === "pro"
+                  ? "bg-indigo-600 text-white transform hover:-translate-y-1 transition-all"
+                  : "bg-white border-2 border-transparent hover:border-indigo-100 transition-all"
+              }`}
+            >
+              {plan.name === "pro" && (
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-yellow-900 px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
+                  <Star className="w-4 h-4" />
+                  Most Popular
+                </div>
+              )}
+              <h3 className="text-xl font-semibold mb-2">{plan.name?.toUpperCase()}</h3>
+              <div className="mb-6">
+                <span className="text-4xl font-bold">
+                  {typeof plan.price === "number" ? `$${plan.price}` : plan.price}
+                </span>
+                {plan.billingCycle !== "custom" && <span className="text-gray-600">/month</span>}
+              </div>
+              <ul className="space-y-4 mb-8 text-gray-900">
+                <li>Emails per Day: {plan.emailsPerDay}</li>
+                <li>Emails per Month: {plan.emailsPerMonth}</li>
+                <li>Templates: {plan.templates}</li>
+                <li>AI Rewrites: {plan.aiRewrites}</li>
+                <li>Customer Support: {plan.customerSupport}</li>
+              </ul>
+              <button
+                className={`w-full px-6 py-2 rounded-lg font-semibold ${
+                  plan.name === "Pro"
+                    ? "bg-white text-indigo-600 hover:bg-indigo-50"
+                    : "border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50"
+                } transition-colors`}
+                onClick={() => alert(`Selected Plan: ${plan.name}`)}
+              >
+                {plan.price === "Contact Sales" ? "Contact Sales" : "Get Started"}
+              </button>
             </div>
-            <ul className="space-y-4 mb-8">
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-500" />
-                <span>1,000 emails/month</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-500" />
-                <span>Basic templates</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-500" />
-                <span>Email support</span>
-              </li>
-            </ul>
-            <button className="w-full border-2 border-indigo-600 text-indigo-600 px-6 py-2 rounded-lg hover:bg-indigo-50 transition-colors">
-              Get Started
-            </button>
-          </div>
-
-          {/* Pro Plan */}
-          <div className="bg-indigo-600 p-8 rounded-2xl shadow-lg relative transform hover:-translate-y-1 transition-all">
-            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-yellow-900 px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
-              <Star className="w-4 h-4" />
-              Most Popular
-            </div>
-            <h3 className="text-xl font-semibold mb-2 text-white">Pro</h3>
-            <div className="mb-6 text-white">
-              <span className="text-4xl font-bold">$29</span>
-              <span>/month</span>
-            </div>
-            <ul className="space-y-4 mb-8 text-indigo-100">
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400" />
-                <span>10,000 emails/month</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400" />
-                <span>Premium templates</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400" />
-                <span>Priority support</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400" />
-                <span>Advanced analytics</span>
-              </li>
-            </ul>
-            <button className="w-full bg-white text-indigo-600 px-6 py-2 rounded-lg hover:bg-indigo-50 transition-colors font-semibold">
-              Get Started
-            </button>
-          </div>
-
-          {/* Enterprise Plan */}
-          <div className="bg-white p-8 rounded-2xl shadow-lg border-2 border-transparent hover:border-indigo-100 transition-all">
-            <h3 className="text-xl font-semibold mb-2">Enterprise</h3>
-            <div className="mb-6">
-              <span className="text-4xl font-bold">$99</span>
-              <span className="text-gray-600">/month</span>
-            </div>
-            <ul className="space-y-4 mb-8">
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-500" />
-                <span>Unlimited emails</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-500" />
-                <span>Custom templates</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-500" />
-                <span>24/7 phone support</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-500" />
-                <span>Dedicated manager</span>
-              </li>
-            </ul>
-            <button className="w-full border-2 border-indigo-600 text-indigo-600 px-6 py-2 rounded-lg hover:bg-indigo-50 transition-colors">
-              Contact Sales
-            </button>
-          </div>
+          ))}
         </div>
       </div>
 
