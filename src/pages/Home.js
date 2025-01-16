@@ -137,11 +137,11 @@ function Home() {
               </ul>
               <button
                 className={`w-full px-6 py-2 rounded-lg font-semibold ${
-                  plan.name === "Pro"
+                  plan.name === "pro"
                     ? "bg-white text-indigo-600 hover:bg-indigo-50"
                     : "border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50"
                 } transition-colors`}
-                onClick={() => alert(`Selected Plan: ${plan.name}`)}
+                onClick={() => alert(`This feature is not available currently. Please contact support.`)}
               >
                 {plan.price === "Contact Sales" ? "Contact Sales" : "Get Started"}
               </button>

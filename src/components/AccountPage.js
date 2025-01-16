@@ -229,9 +229,9 @@ function AccountPage() {
                     ? "bg-indigo-600 text-white cursor-default"
                     : "border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50"
                 } transition-colors`}
-                disabled={plan.name === planName} // Disable button for the current plan
+                disabled={plan.name === planName}
                 onClick={() => {
-                  if (plan.name !== planName) alert(`Selected Plan: ${plan.name}`);
+                  if (plan.name !== planName) alert(`This feature is not available currently. Please contact support.`);
                 }}
               >
                 {plan.name === planName ? "Current Plan" : "Upgrade"}
