@@ -9,7 +9,6 @@ import { Mail, Key, FileText, Users, CreditCard, LogOut } from 'lucide-react';
 const UserDashboard = () => {
   const [currentPage, setCurrentPage] = useState("SendEmail");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [credits, setCredits] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -31,7 +30,6 @@ const UserDashboard = () => {
 
   useEffect(() => {
     const userEmail = localStorage.getItem("userEmail");
-    setCredits(localStorage.getItem("credits"));
     if (userEmail === "null") {
       alert("Please login to continue");
       navigate("/home"); 
@@ -82,15 +80,6 @@ const UserDashboard = () => {
             </li>
           ))}
         </ul>
-        <div className="p-4">
-          <div
-            className={`w-full text-white font-bold py-2 px-4 rounded-md ${
-              credits === '0' ? "bg-red-600" : "bg-green-600"
-            }`}
-            >            
-            Available Credits: {credits}
-          </div>
-        </div>
         <div className="p-4">
           <button
             onClick={handleLogout}
