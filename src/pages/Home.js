@@ -36,17 +36,17 @@ function Home() {
               <span className="text-indigo-600"> Ease</span>
             </h1>
             <p className="text-lg md:text-xl text-gray-600 mb-6 md:mb-8">
-              Streamline your email campaigns with our powerful bulk email sender. Reach multiple recipients efficiently and professionally.
+              Streamline your email campaigns with our powerful bulk email sender. Reach multiple recruiters efficiently and professionally.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <button className="w-full sm:w-auto bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
-             onClick={handleLogin}>
-                Start Now
+              onClick={handleLogin}>
+                Login / Register
                 <ArrowRight className="w-5 h-5" />
               </button>
-              <button className="w-full sm:w-auto border-2 border-indigo-600 text-indigo-600 px-8 py-3 rounded-lg hover:bg-indigo-50 transition-colors">
+              {/* <button className="w-full sm:w-auto border-2 border-indigo-600 text-indigo-600 px-8 py-3 rounded-lg hover:bg-indigo-50 transition-colors">
                 Learn More
-              </button>
+              </button> */}
             </div>
           </div>
           <div className="bg-white p-4 md:p-8 rounded-2xl shadow-xl">
@@ -159,11 +159,12 @@ function Home() {
             </h2>
             <div className="space-y-4">
               {[
+                'Get access to 100,000 recruiters',
                 'Bulk email sending with high deliverability',
                 'CSV/TXT file upload support',
                 'Easy recipient list management',
+                'Save unlimited mail formats',
                 'Professional email composer',
-                'Real-time delivery tracking',
                 'Secure and reliable platform'
               ].map((benefit, index) => (
                 <div key={index} className="flex items-center gap-3">
@@ -192,7 +193,8 @@ function Home() {
           <p className="text-indigo-100 mb-6 md:mb-8 max-w-2xl mx-auto">
             Join thousands of satisfied users who trust MailEasy for their bulk email needs.
           </p>
-          <button className="w-full sm:w-auto bg-white text-indigo-600 px-8 py-3 rounded-lg hover:bg-indigo-50 transition-colors font-semibold">
+          <button className="w-full sm:w-auto bg-white text-indigo-600 px-8 py-3 rounded-lg hover:bg-indigo-50 transition-colors font-semibold"
+          onClick={handleLogin}>
             Get Started for Free
           </button>
         </div>
@@ -203,7 +205,6 @@ function Home() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <Mail className="w-6 h-6" />
               <span className="text-xl font-bold text-white">MailEasy</span>
             </div>
             <div className="text-sm text-center sm:text-right">
