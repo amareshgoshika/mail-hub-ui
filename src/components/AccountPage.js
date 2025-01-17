@@ -27,35 +27,23 @@ function AccountPage() {
   useEffect(() => {
     if (isFetched) return;
     const senderEmail = localStorage.getItem("userEmail");
-    if (senderEmail) {
-      setFormData((prevState) => ({
-        ...prevState,
-        email: senderEmail,
-      }));
-      fetchUserDetails(senderEmail);
-      fetchPricingPlans();
-      setIsFetched(true);
-    }
-  }, [isFetched]);
+    const fetchUserDetails = async (senderEmail) => {
 
-  const fetchUserDetails = async (senderEmail) => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_GETUSERDETAILS_URL}?email=${senderEmail}`
+        );
+        setName(response.data.name);
+        setCreditsUsed(response.data.credits);
+        setPhone(response.data.phone);
+        setPlanName(response.data.pricingPlan);
+        fetchUserAccounts(response.data.pricingPlan);
+  
+      } catch (error) {
+        console.error("Error user details", error);
+      }
+    };
 
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_GETUSERDETAILS_URL}?email=${senderEmail}`
-      );
-      setName(response.data.name);
-      setCreditsUsed(response.data.credits);
-      setPhone(response.data.phone);
-      setPlanName(response.data.pricingPlan);
-      fetchUserAccounts(response.data.pricingPlan);
-
-      console.log(response.data.pricingPlan + planName);
-
-    } catch (error) {
-      console.error("Error user details", error);
-    }
-  };
 
   const fetchUserAccounts = async (planName) => {
 
@@ -66,12 +54,22 @@ function AccountPage() {
       setEmailsPerDay(accountResponse.data.emailsPerDay);
       setEmailsPerMonth(accountResponse.data.emailsPerMonth);
       setPrice(accountResponse.data.price);
-      console.log("emailPerDay", emailsPerDay);
 
     } catch (error) {
       console.error("Error user details", error);
     }
   };
+  
+    if (senderEmail) {
+      setFormData((prevState) => ({
+        ...prevState,
+        email: senderEmail,
+      }));
+      fetchUserDetails(senderEmail);
+      fetchPricingPlans();
+      setIsFetched(true);
+    }
+  }, [isFetched, emailsPerDay, planName]);
 
   const fetchPricingPlans = async () => {
     try {

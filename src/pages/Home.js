@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import { Mail, Users, Zap, Shield, ArrowRight, CheckCircle2, Star } from 'lucide-react';
+import { Users, Zap, Shield, ArrowRight, CheckCircle2, Star } from 'lucide-react';
 
 
 function Home() {
