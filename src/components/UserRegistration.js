@@ -69,7 +69,7 @@ function UserRegistration() {
                   value={formData.name}
                   onChange={handleInputChange}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
-                  placeholder="John Doe"
+                  placeholder="First Name, Last Name"
                   required
                 />
               </div>
@@ -90,7 +90,7 @@ function UserRegistration() {
                   value={formData.email}
                   onChange={handleInputChange}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
-                  placeholder="john@example.com"
+                  placeholder="username@gmail.com"
                   required
                 />
               </div>
@@ -111,7 +111,7 @@ function UserRegistration() {
                   value={formData.phone}
                   onChange={handleInputChange}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
-                  placeholder="+1 (555) 000-0000"
+                  placeholder="+1 (***) ***-****"
                   required
                 />
               </div>
