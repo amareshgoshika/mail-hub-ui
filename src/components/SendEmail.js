@@ -48,6 +48,24 @@ function SendEmail() {
     fetchMailFormats();
   }, []);
 
+  const handleAuth = async () => {
+    const email = localStorage.getItem("userEmail");
+    try {
+      const response = await axios.post(
+        process.env.REACT_APP_AUTHENTICATE_URL,
+        { email },
+        {
+          headers: { "Content-Type": "application/json" },
+          responseType: "json",
+        }
+      );
+      const authUrl = response.data.authUrl;
+      window.location.href = authUrl;
+    } catch (error) {
+      alert("Error initiating authentication: " + error.message);
+    }
+  };
+
   const handleCSVFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) {
@@ -101,6 +119,7 @@ function SendEmail() {
     let successCount = 0;
     let failedEmails = [];
     let creditError = false;
+    let tokenError = false;
 
     for (let i = 0; i < emailsToSend.length; i++) {
       const email = emailsToSend[i];
@@ -131,6 +150,9 @@ function SendEmail() {
           if (error.response.status === 400 && error.response.data.message === 'No credits available') {
             creditError = true;
             break;
+          } else if (error.response.status === 500) {
+            tokenError = true;
+            handleAuth();
           } else {
             failedEmails.push(email);
           }
@@ -149,6 +171,10 @@ function SendEmail() {
     
     if (creditError) {
       summaryMessage += `\nStopped due to insufficient credits.`;
+    }
+    
+    if (tokenError) {
+      summaryMessage += `\nStopped due to token`;
     }
 
     alert(summaryMessage);
