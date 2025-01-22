@@ -166,7 +166,7 @@ function SendEmail() {
     let summaryMessage = `Thanks for choosing Maileazy`;
 
     if (successCount > 0) {
-      summaryMessage += `${successCount} email(s) sent successfully.`;
+      summaryMessage += `\n${successCount} email(s) sent successfully.`;
     }
   
     if (failedEmails.length > 0) {
