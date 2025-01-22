@@ -163,7 +163,11 @@ function SendEmail() {
       }
     }
 
-    let summaryMessage = `${successCount} email(s) sent successfully.`;
+    let summaryMessage = `Thanks for choosing Maileazy`;
+
+    if (successCount > 0) {
+      summaryMessage += `${successCount} email(s) sent successfully.`;
+    }
   
     if (failedEmails.length > 0) {
       summaryMessage += `\nFailed to send to the following emails:\n${failedEmails.join(', ')}`;
@@ -174,7 +178,7 @@ function SendEmail() {
     }
     
     if (tokenError) {
-      summaryMessage += `\nStopped due to token`;
+      summaryMessage += `\nToken was expired, Please authenticate again to continue`;
     }
 
     alert(summaryMessage);
