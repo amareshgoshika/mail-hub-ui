@@ -38,7 +38,7 @@ function AccountPage() {
     const senderEmail = localStorage.getItem("userEmail");
 
     if (sessionId && tab === "Account") {
-      axios.post(`${process.env.REACT_APP_UPGRADE_PRICING_PLAN}`, { planName, senderEmail })
+      axios.post(`${process.env.REACT_APP_UPGRADE_PRICING_PLAN}`, { planName, senderEmail, sessionId })
         .then((response) => {
           console.log("Payment successful, Firebase updated:", response.data);
           navigate("/");
