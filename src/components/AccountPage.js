@@ -22,7 +22,7 @@ function AccountPage() {
   const [planName, setPlanName] = useState(null);
   const [price, setPrice] = useState(null);
   const [emailsPerDay, setEmailsPerDay] = useState(null);
-  const [, setEmailsPerMonth] = useState(null);
+  const [emailsPerMonth, setEmailsPerMonth] = useState(null);
   const [pricingPlan, setPricingPlan] = useState([]);
   const [formData, setFormData] = useState({
     email: "",
@@ -187,16 +187,16 @@ function AccountPage() {
             <div className="mt-6 space-y-6">
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-500">Available Credits today</span>
+                  <span className="text-sm text-gray-500">Available Credits</span>
                   <span className="font-medium text-indigo-600">
-                    {emailsPerDay - creditsUsed}
+                    {emailsPerMonth - creditsUsed}
                   </span>
                 </div>
                 <div className="relative h-2 overflow-hidden rounded-full bg-gray-200">
                   <div
                     className="absolute left-0 top-0 h-full bg-indigo-600 transition-all duration-300"
                     style={{
-                      width: `${(creditsUsed / emailsPerDay) * 100}%`,
+                      width: `${(creditsUsed / emailsPerMonth) * 100}%`,
                     }}
                   />
                 </div>
@@ -205,11 +205,11 @@ function AccountPage() {
                     {creditsUsed} Used
                   </span>
                   <span className="text-gray-500">
-                    {emailsPerDay} Total
+                    {emailsPerMonth} Total
                   </span>
                 </div>
               </div>
-              {creditsUsed === emailsPerDay && (
+              {creditsUsed === emailsPerMonth && (
                 <button className="inline-flex w-full items-center justify-center space-x-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                 <CreditCard className="h-4 w-4" />
                 <span>Purchase Credits</span>
@@ -256,7 +256,9 @@ function AccountPage() {
           <div className="mt-6">
 
         <div className="grid md:grid-cols-3 gap-8">
-          {pricingPlan.map((plan) => (
+          {pricingPlan
+          .filter((plan) => plan.name !== "welcome")
+          .map((plan) => (
             <div
               key={plan.name}
               className={`p-8 rounded-2xl shadow-lg

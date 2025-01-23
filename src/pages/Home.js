@@ -107,7 +107,9 @@ function Home() {
           Choose the perfect plan for your email marketing needs. All plans include our core features.
         </p>
         <div className="grid md:grid-cols-3 gap-8">
-          {plans.map((plan) => (
+        {plans
+          .filter((plan) => plan.name !== "welcome")
+          .map((plan) => (
             <div
               key={plan.name}
               className={`p-8 rounded-2xl shadow-lg ${
