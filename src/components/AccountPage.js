@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import {
   CreditCard,
@@ -7,17 +8,21 @@ import {
   User,
   Phone,
   Mail,
-  Clock,
+  Users,
 } from 'lucide-react';
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
 function AccountPage() {
+  const navigate = useNavigate();
   const [name, setName] = useState(null);
   const [creditsUsed, setCreditsUsed] = useState(null);
   const [phone, setPhone] = useState(null);
   const [planName, setPlanName] = useState(null);
   const [price, setPrice] = useState(null);
   const [emailsPerDay, setEmailsPerDay] = useState(null);
-  const [, setEmailsPerMonth] = useState(null);
+  const [emailsPerMonth, setEmailsPerMonth] = useState(null);
   const [pricingPlan, setPricingPlan] = useState([]);
   const [formData, setFormData] = useState({
     email: "",
@@ -26,7 +31,24 @@ function AccountPage() {
 
   useEffect(() => {
     if (isFetched) return;
+    const params = new URLSearchParams(window.location.search);
+    const planName = params.get("planName");
+    const sessionId = params.get("session_id");
+    const tab = params.get("tab");
     const senderEmail = localStorage.getItem("userEmail");
+
+    if (sessionId && tab === "Account") {
+      axios.post(`${process.env.REACT_APP_UPGRADE_PRICING_PLAN}`, { planName, senderEmail, sessionId })
+        .then((response) => {
+          console.log("Payment successful, Firebase updated:", response.data);
+          navigate("/");
+        })
+        .catch((error) => {
+          console.error("Error updating Firebase:", error);
+        });
+    }
+
+    
     const fetchUserDetails = async (senderEmail) => {
 
       try {
@@ -82,6 +104,39 @@ function AccountPage() {
     }
   };
 
+  const handleUpgrade = async (plan, planName) => {
+    try {
+      const stripe = await stripePromise;
+      const userEmail = localStorage.getItem("userEmail");
+
+      if (!userEmail) {
+        alert("User email is missing. Please log in again.");
+        return;
+      }
+
+      const response = await axios.post(
+        process.env.REACT_APP_CREATE_CHECKOUT_SESSION_URL,
+        { 
+          planId: plan,
+          userEmail: userEmail,
+          planName: planName,
+         }
+      );
+
+      const { sessionId } = response.data;
+
+      const { error } = await stripe.redirectToCheckout({
+        sessionId,
+      });
+
+      if (error) {
+        console.error("Stripe Checkout error:", error.message);
+      }
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="mx-auto max-w-7xl space-y-8">
@@ -132,16 +187,16 @@ function AccountPage() {
             <div className="mt-6 space-y-6">
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-500">Available Credits today</span>
+                  <span className="text-sm text-gray-500">Available Credits</span>
                   <span className="font-medium text-indigo-600">
-                    {emailsPerDay - creditsUsed}
+                    {emailsPerMonth - creditsUsed}
                   </span>
                 </div>
                 <div className="relative h-2 overflow-hidden rounded-full bg-gray-200">
                   <div
                     className="absolute left-0 top-0 h-full bg-indigo-600 transition-all duration-300"
                     style={{
-                      width: `${(creditsUsed / emailsPerDay) * 100}%`,
+                      width: `${(creditsUsed / emailsPerMonth) * 100}%`,
                     }}
                   />
                 </div>
@@ -150,11 +205,11 @@ function AccountPage() {
                     {creditsUsed} Used
                   </span>
                   <span className="text-gray-500">
-                    {emailsPerDay} Total
+                    {emailsPerMonth} Total
                   </span>
                 </div>
               </div>
-              {creditsUsed === emailsPerDay && (
+              {creditsUsed === emailsPerMonth && (
                 <button className="inline-flex w-full items-center justify-center space-x-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                 <CreditCard className="h-4 w-4" />
                 <span>Purchase Credits</span>
@@ -182,14 +237,14 @@ function AccountPage() {
                   <Package className="h-8 w-8 text-indigo-600" />
                 </div>
               </div>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Clock className="h-5 w-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-500">Next Renewal</p>
-                    <p className="font-medium">Currently not available</p>
-                  </div>
-                </div>
+              <div className="mt-12 text-center">
+                <button
+                  onClick={() => navigate('/?tab=SubscriptionManagement')}
+                  className="inline-flex items-center text-indigo-600 hover:text-indigo-700"
+                >
+                  <Users className="w-5 h-5 mr-2" />
+                  Manage Your Subscription
+                </button>
               </div>
             </div>
           </div>
@@ -201,7 +256,9 @@ function AccountPage() {
           <div className="mt-6">
 
         <div className="grid md:grid-cols-3 gap-8">
-          {pricingPlan.map((plan) => (
+          {pricingPlan
+          .filter((plan) => plan.name !== "welcome")
+          .map((plan) => (
             <div
               key={plan.name}
               className={`p-8 rounded-2xl shadow-lg
@@ -229,7 +286,7 @@ function AccountPage() {
                 } transition-colors`}
                 disabled={plan.name === planName}
                 onClick={() => {
-                  if (plan.name !== planName) alert(`This feature is not available currently. Please contact support.`);
+                  if (plan.name !== planName) handleUpgrade(plan.stripePriceID, plan.name);
                 }}
               >
                 {plan.name === planName ? "Current Plan" : "Upgrade"}

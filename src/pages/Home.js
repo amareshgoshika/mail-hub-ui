@@ -8,6 +8,7 @@ function Home() {
   const [plans, setPlans] = useState([]);
     const navigate = useNavigate();
     const handleLogin = () => navigate("/login");
+    const handleRegister = () => navigate("/register");
 
     const fetchPricingPlans = async () => {
       try {
@@ -106,7 +107,9 @@ function Home() {
           Choose the perfect plan for your email marketing needs. All plans include our core features.
         </p>
         <div className="grid md:grid-cols-3 gap-8">
-          {plans.map((plan) => (
+        {plans
+          .filter((plan) => plan.name !== "welcome")
+          .map((plan) => (
             <div
               key={plan.name}
               className={`p-8 rounded-2xl shadow-lg ${
@@ -141,8 +144,7 @@ function Home() {
                     ? "bg-white text-indigo-600 hover:bg-indigo-50"
                     : "border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50"
                 } transition-colors`}
-                onClick={() => alert(`This feature is not available currently. Please contact support.`)}
-              >
+                onClick={handleRegister}>
                 {plan.price === "Contact Sales" ? "Contact Sales" : "Get Started"}
               </button>
             </div>
@@ -194,7 +196,7 @@ function Home() {
             Join thousands of satisfied users who trust MailEasy for their bulk email needs.
           </p>
           <button className="w-full sm:w-auto bg-white text-indigo-600 px-8 py-3 rounded-lg hover:bg-indigo-50 transition-colors font-semibold"
-          onClick={handleLogin}>
+          onClick={handleRegister}>
             Get Started for Free
           </button>
         </div>
