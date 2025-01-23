@@ -91,7 +91,7 @@ function AccountPage() {
       fetchPricingPlans();
       setIsFetched(true);
     }
-  }, [isFetched, emailsPerDay, planName]);
+  }, [isFetched, emailsPerDay, planName, navigate]);
 
   const fetchPricingPlans = async () => {
     try {
