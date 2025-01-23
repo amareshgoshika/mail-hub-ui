@@ -5,18 +5,21 @@ import CredentialGenerate from "../components/CredentialGenerate";
 import AccountPage from "../components/AccountPage";
 import MailFormats from "../components/MailFormats";
 import { Mail, Key, FileText, Users, CreditCard, LogOut } from 'lucide-react';
+import SubscriptionManagement from "../components/SubscriptionManagement";
 
 const UserDashboard = () => {
   const [currentPage, setCurrentPage] = useState("SendEmail");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const sidebarPages = ['SendEmail', 'GenerateCredential', 'MailFormats', 'Account']; 
 
   const pageComponents = useMemo(() => ({
     SendEmail: <SendEmail />,
     GenerateCredential: <CredentialGenerate />,
     MailFormats: <MailFormats setCurrentPage={setCurrentPage} />,
     Account: <AccountPage />,
+    SubscriptionManagement: <SubscriptionManagement />,
   }), []);
 
   const tabIcons = {
@@ -65,7 +68,7 @@ const UserDashboard = () => {
         } lg:translate-x-0`}
       >
         <ul className="space-y-4 p-4">
-          {Object.keys(pageComponents).map((page) => (
+          {sidebarPages.map((page) => (
             <li
               key={page}
               className={`cursor-pointer p-2 rounded-md ${
