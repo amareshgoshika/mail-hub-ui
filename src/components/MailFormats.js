@@ -89,7 +89,7 @@ const MailFormats = ({ setCurrentPage }) => {
         return;
       }
   
-      let fileURL = null;
+      let fileURL = selectedFormat?.attachmentURL || null;
   
       if (file) {
         try {
@@ -105,6 +105,7 @@ const MailFormats = ({ setCurrentPage }) => {
 
     if (!selectedFormat) return;
     const updatedMailFormat = {
+      id: selectedFormat.id,
       formatName,
       subject,
       body,
@@ -156,7 +157,6 @@ const MailFormats = ({ setCurrentPage }) => {
           }),
         }
       );
-      console.log(process.env.REACT_APP_DELETE_MAIL_FORMATS_URL);
   
       if (response.ok) {
         alert("Mail format deleted successfully!");
