@@ -138,7 +138,7 @@ function AccountPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-8">
       <div className="mx-auto max-w-7xl space-y-8">
         <div className="grid gap-8 md:grid-cols-2">
           {/* Profile Section */}
@@ -178,77 +178,79 @@ function AccountPage() {
               </div>
             </div>
           </div>
-
-          {/* Credits Section */}
-          <div className="rounded-lg bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-bold text-indigo-900">
-              Credits Overview
-            </h2>
-            <div className="mt-6 space-y-6">
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-500">Available Credits</span>
-                  <span className="font-medium text-indigo-600">
-                    {emailsPerMonth - creditsUsed}
-                  </span>
-                </div>
-                <div className="relative h-2 overflow-hidden rounded-full bg-gray-200">
-                  <div
-                    className="absolute left-0 top-0 h-full bg-indigo-600 transition-all duration-300"
-                    style={{
-                      width: `${(creditsUsed / emailsPerMonth) * 100}%`,
-                    }}
-                  />
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">
-                    {creditsUsed} Used
-                  </span>
-                  <span className="text-gray-500">
-                    {emailsPerMonth} Total
-                  </span>
-                </div>
-              </div>
-              {creditsUsed === emailsPerMonth && (
-                <button className="inline-flex w-full items-center justify-center space-x-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                <CreditCard className="h-4 w-4" />
-                <span>Purchase Credits</span>
-              </button>
-              )}
-            </div>
-          </div>
-
-          {/* Current Plan Section */}
-          <div className="rounded-lg bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-bold text-indigo-900">
-              Current Subscription
-            </h2>
-            <div className="mt-6 space-y-6">
-              <div className="rounded-lg bg-indigo-50 p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-semibold text-indigo-900">
-                    {planName?.toUpperCase()}
-                    </h4>
-                    <p className="text-sm text-indigo-600">
-                      ${price}/month
-                    </p>
-                  </div>
-                  <Package className="h-8 w-8 text-indigo-600" />
-                </div>
-              </div>
-              <div className="mt-12 text-center">
-                <button
-                  onClick={() => navigate('/?tab=SubscriptionManagement')}
-                  className="inline-flex items-center text-indigo-600 hover:text-indigo-700"
-                >
-                  <Users className="w-5 h-5 mr-2" />
-                  Manage Your Subscription
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
+
+          <div class="flex flex-col md:flex-row gap-4">
+            {/* Credits Section */}
+            <div className="rounded-lg bg-white p-6 shadow-sm flex-1">
+              <h2 className="text-xl font-bold text-indigo-900">
+                Credits Overview
+              </h2>
+              <div className="mt-6 space-y-6">
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-500">Available Credits</span>
+                    <span className="font-medium text-indigo-600">
+                      {emailsPerMonth - creditsUsed}
+                    </span>
+                  </div>
+                  <div className="relative h-2 overflow-hidden rounded-full bg-gray-200">
+                    <div
+                      className="absolute left-0 top-0 h-full bg-indigo-600 transition-all duration-300"
+                      style={{
+                        width: `${(creditsUsed / emailsPerMonth) * 100}%`,
+                      }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">
+                      {creditsUsed} Used
+                    </span>
+                    <span className="text-gray-500">
+                      {emailsPerMonth} Total
+                    </span>
+                  </div>
+                </div>
+                {creditsUsed === emailsPerMonth && (
+                  <button className="inline-flex w-full items-center justify-center space-x-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                  <CreditCard className="h-4 w-4" />
+                  <span>Purchase Credits</span>
+                </button>
+                )}
+              </div>
+            </div>
+
+            {/* Current Plan Section */}
+            <div className="rounded-lg bg-white p-6 shadow-sm flex-1">
+              <h2 className="text-xl font-bold text-indigo-900">
+                Current Subscription
+              </h2>
+              <div className="mt-6 space-y-6">
+                <div className="rounded-lg bg-indigo-50 p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-semibold text-indigo-900">
+                      {planName?.toUpperCase()}
+                      </h4>
+                      <p className="text-sm text-indigo-600">
+                        ${price}/month
+                      </p>
+                    </div>
+                    <Package className="h-8 w-8 text-indigo-600" />
+                  </div>
+                </div>
+                <div className="mt-12 text-center">
+                  <button
+                    onClick={() => navigate('/?tab=SubscriptionManagement')}
+                    className="inline-flex items-center text-indigo-600 hover:text-indigo-700"
+                  >
+                    <Users className="w-5 h-5 mr-2" />
+                    Manage Your Subscription
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
 
         {/* Available Plans Section */}
         <div className="col-span-2 rounded-lg bg-white p-6 shadow-sm">
