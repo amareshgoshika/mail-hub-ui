@@ -269,16 +269,16 @@ function SendEmail() {
     <>
       <div className="min-h-screen bg-gray-100">
         {/* Main wrapper */}
-        <div className="max-w-7xl mx-auto bg-white shadow-md rounded-md lg:p-8 sm:p-0">
-          <div className="mb-8 lg:p-0 p-4">
+        <div className="max-w-7xl mx-auto bg-white shadow-md rounded-md lg:p-4 sm:p-0">
+          <div className="lg:mb-4 lg:p-0 p-4">
             <h2 className="text-2xl font-bold text-gray-800">Send Emails</h2>
             <p className="text-gray-600">Compose and send emails with CSV-based recipients</p>
           </div>
   
           {/* Two-column layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* LEFT COLUMN: Recipients & CSV */}
-            <div className="p-6 bg-gray-50 rounded-md shadow-sm">
+            <div className="lg:col-span-1 p-6 bg-gray-50 rounded-md shadow-sm">
               <h3 className="text-xl font-semibold mb-4 text-gray-800">Recipients</h3>
   
               {/* Single Recipient */}
@@ -354,12 +354,11 @@ function SendEmail() {
             </div>
   
             {/* RIGHT COLUMN: Email Content */}
-            <div className="p-6 bg-gray-50 rounded-md shadow-sm">
+            <div className="lg:col-span-2 p-6 bg-gray-50 rounded-md shadow-sm">
               <h3 className="text-xl font-semibold mb-4 text-gray-800">Content</h3>
   
               {/* Mail Format Dropdown */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Choose a Mail Format</label>
                 <select
                   value={selectedOption}
                   onChange={handleMailFormatChange}
@@ -376,7 +375,6 @@ function SendEmail() {
   
               {/* Subject */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Subject</label>
                 <input
                   type="text"
                   value={subject}
@@ -388,7 +386,6 @@ function SendEmail() {
   
               {/* Mail Body */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Mail Body</label>
                 <div className="border border-gray-300 rounded-md overflow-hidden">
                   <ReactQuill
                     value={body}
