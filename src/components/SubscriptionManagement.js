@@ -113,7 +113,7 @@ function SubscriptionManagement() {
         {activeTab === 'details' && (
           <div className="bg-white rounded-lg shadow-sm p-6">
             {isSubscriptionActive === true && (
-              <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="bg-white rounded-lg p-6">
                 <div className="flex items-center justify-between mb-2">
                   <h2 className="text-2xl font-semibold text-gray-800">Current Plan</h2>
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">

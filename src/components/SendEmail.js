@@ -270,7 +270,7 @@ function SendEmail() {
       <div className="min-h-screen bg-gray-100">
         {/* Main wrapper */}
         <div className="max-w-7xl mx-auto bg-white shadow-md rounded-md lg:p-4 sm:p-0">
-          <div className="mb-8 lg:p-0 p-4">
+          <div className="lg:mb-4 lg:p-0 p-4">
             <h2 className="text-2xl font-bold text-gray-800">Send Emails</h2>
             <p className="text-gray-600">Compose and send emails with CSV-based recipients</p>
           </div>

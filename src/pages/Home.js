@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { Users, Zap, Shield, ArrowRight, CheckCircle2, Star } from 'lucide-react';
+import Testimonials from "./Testimonials";
 
 
 function Home() {
@@ -185,6 +186,7 @@ function Home() {
           </div>
         </div>
       </div>
+      <Testimonials />
 
       {/* CTA Section */}
       <div className="bg-indigo-600 py-12 md:py-16">
