@@ -13,6 +13,7 @@ function SubscriptionManagement() {
   const [pricingPlan, setPricingPlan] = useState(null);
   const [renewalDate, setRenewalDate] = useState(null);
   const [price, setPrice] = useState(null);
+  const [subscriptionId, setSubscriptionId] = useState(null);
 
   useEffect(() => {
     const senderEmail = localStorage.getItem('userEmail');
@@ -40,6 +41,7 @@ function SubscriptionManagement() {
         setPricingPlan(response.data.pricingPlan);
         setRenewalDate(response.data.renewalDate);
         setIsSubscriptionActive(response.data.subscriptionStatus);
+        setSubscriptionId(response.data.subscriptionId);
         fetchUserAccounts(response.data.pricingPlan);
   
       } catch (error) {
@@ -63,6 +65,31 @@ function SubscriptionManagement() {
     fetchUserDetails(senderEmail);
     fetchPaymentHistory();
   }, []);
+
+  const handleCancelSubscription = async () => {
+    if (!subscriptionId) {
+      console.error("No subscription ID available");
+      return;
+    }
+
+    try {
+      const senderEmail = localStorage.getItem('userEmail');
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL_HTTPS}/payments/cancel-subscription`, {
+        subscriptionId,
+        userEmail: senderEmail,
+      });
+
+      if (response.status === 200) {
+        alert("Subscription canceled successfully!");
+        setIsSubscriptionActive(false);
+        setPricingPlan(null);
+        setRenewalDate(null);
+      }
+    } catch (error) {
+      console.error("Error canceling subscription:", error);
+      alert("Failed to cancel the subscription. Please try again later.");
+    }
+  };
 
   const formatTransactionDate = (datevalue) => {
     const milliseconds = datevalue._seconds * 1000;
@@ -151,7 +178,7 @@ function SubscriptionManagement() {
                 </button>
                 {isSubscriptionActive && (
                   <button
-                    // onClick={handleCancelSubscription}
+                    onClick={handleCancelSubscription}
                     className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                   >
                     <XCircle className="w-4 h-4 mr-2" />
