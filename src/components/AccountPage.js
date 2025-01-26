@@ -23,6 +23,8 @@ function AccountPage() {
   const [price, setPrice] = useState(null);
   const [emailsPerDay, setEmailsPerDay] = useState(null);
   const [emailsPerMonth, setEmailsPerMonth] = useState(null);
+  const [aiRewrites, setaiRewrites] = useState(null);
+  const [aiRewritesUsed, setaiRewritesUsed] = useState(null);
   const [pricingPlan, setPricingPlan] = useState([]);
   const [formData, setFormData] = useState({
     email: "",
@@ -59,6 +61,7 @@ function AccountPage() {
         setCreditsUsed(response.data.credits);
         setPhone(response.data.phone);
         setPlanName(response.data.pricingPlan);
+        setaiRewritesUsed(response.data.aiRewrites);
         fetchUserAccounts(response.data.pricingPlan);
   
       } catch (error) {
@@ -75,6 +78,7 @@ function AccountPage() {
       );
       setEmailsPerDay(accountResponse.data.emailsPerDay);
       setEmailsPerMonth(accountResponse.data.emailsPerMonth);
+      setaiRewrites(accountResponse.data.aiRewrites);
       setPrice(accountResponse.data.price);
 
     } catch (error) {
@@ -171,7 +175,9 @@ function AccountPage() {
                 </div>
               </div>
               <div className="pt-4">
-                <button className="inline-flex items-center space-x-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                <button 
+                onClick={() => navigate('/?tab=ChangePassword')}
+                className="inline-flex items-center space-x-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                   <Lock className="h-4 w-4" />
                   <span>Change Password</span>
                 </button>
@@ -208,6 +214,30 @@ function AccountPage() {
                     </span>
                     <span className="text-gray-500">
                       {emailsPerMonth} Total
+                    </span>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-500">Available AI Rewrites</span>
+                    <span className="font-medium text-indigo-600">
+                      {aiRewrites - aiRewritesUsed}
+                    </span>
+                  </div>
+                  <div className="relative h-2 overflow-hidden rounded-full bg-gray-200">
+                    <div
+                      className="absolute left-0 top-0 h-full bg-indigo-600 transition-all duration-300"
+                      style={{
+                        width: `${(aiRewritesUsed / aiRewrites) * 100}%`,
+                      }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">
+                      {aiRewritesUsed} Used
+                    </span>
+                    <span className="text-gray-500">
+                      {aiRewrites} Total
                     </span>
                   </div>
                 </div>
