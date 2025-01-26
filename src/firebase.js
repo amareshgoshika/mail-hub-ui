@@ -5,13 +5,13 @@ import { getStorage } from 'firebase/storage';
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAMsnOaLl4ZsiZPhKacuUdasBE2TkLMrF8",
-  authDomain: "mailhub-a728a.firebaseapp.com",
-  projectId: "mailhub-a728a",
-  storageBucket: "mailhub-a728a.firebasestorage.app",
-  messagingSenderId: "1096555948490",
-  appId: "1:1096555948490:web:977bbdbc2f9f8afb97c733",
-  measurementId: "G-EVQW7M9BZF"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 };
 
 
