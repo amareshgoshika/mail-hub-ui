@@ -6,6 +6,7 @@ import AccountPage from "../components/AccountPage";
 import MailFormats from "../components/MailFormats";
 import { Mail, Key, FileText, Users, CreditCard, LogOut } from 'lucide-react';
 import SubscriptionManagement from "../components/SubscriptionManagement";
+import ChangePassword from "../components/ChangePassword";
 
 const UserDashboard = () => {
   const [currentPage, setCurrentPage] = useState("SendEmail");
@@ -20,6 +21,7 @@ const UserDashboard = () => {
     MailFormats: <MailFormats setCurrentPage={setCurrentPage} />,
     Account: <AccountPage />,
     SubscriptionManagement: <SubscriptionManagement />,
+    ChangePassword: <ChangePassword />,
   }), []);
 
   const tabIcons = {
