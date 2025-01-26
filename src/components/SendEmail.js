@@ -265,6 +265,41 @@ function SendEmail() {
     setBody(value);
   };
 
+  const handleRewrite = async () => {
+    if (!body.trim()) {
+      alert("Please enter body to rewrite.");
+      return;
+    }
+    setLoading(true);
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL_HTTPS}/rewrite/rewrite-api`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          text: body,
+          userEmail: userEmail,
+         }),
+      });
+
+      const data = await response.json();
+      if (data.message && data.message === 'No credits available') {
+        alert('No credits available');
+      } else if (data.rewrittenText) {
+        setBody(data.rewrittenText);
+      } else {
+        alert("Error rewriting the body.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to communicate with the server.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="min-h-screen bg-gray-100">
@@ -428,6 +463,19 @@ function SendEmail() {
                   />
                 </div>
               </div>
+
+              {/* Rewrite Button */}
+              <div className="flex justify-end">
+                <button
+                  onClick={handleRewrite}
+                  disabled={loading}
+                  className={`px-4 py-2 text-white rounded-md ${
+                    loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
+                  }`}
+                >
+                  {loading ? "Rewriting..." : "Rewrite with AI"}
+                </button>
+                </div>
   
               {/* Attachments */}
               <div className="mb-4">
