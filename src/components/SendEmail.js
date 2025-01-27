@@ -40,7 +40,40 @@ function SendEmail() {
         const response = await axios.get(
           `${process.env.REACT_APP_GET_MAIL_FORMATS_URL}?email=${senderEmail}`
         );
+        const formats = response.data;
         setMailFormats(response.data);
+
+        const defaultFormat = formats.find((format) => format.isDefault === true);
+        if (defaultFormat) {
+          setSelectedOption(defaultFormat.id);
+          setSubject(defaultFormat.subject);
+          setBody(defaultFormat.body);
+
+          if (defaultFormat.attachmentURL) {
+            try {
+              const response = await fetch(defaultFormat.attachmentURL);
+              if (response.ok) {
+                const blob = await response.blob();
+                const decodedURL = decodeURIComponent(defaultFormat.attachmentURL);
+                
+                const urlPath = decodedURL.split('?')[0];
+                if (urlPath.includes('attachments/')) {
+                  const fileRelativePath = urlPath.split('attachments/')[1];
+                  const encodedFileName = fileRelativePath.substring(fileRelativePath.lastIndexOf('/') + 1);
+                  const decodedFileName = decodeURIComponent(encodedFileName);
+                  const file = new File([blob], decodedFileName, { type: blob.type });
+                  setAttachments([file]);
+                } else {
+                  console.error("The URL doesn't contain the expected 'attachments/' path.");
+                }
+              } else {
+                console.error("Failed to fetch attachment");
+              }
+            } catch (error) {
+              console.error("Error fetching attachment:", error);
+            }
+          }
+        }
       } catch (error) {
         console.error("Error fetching mail formats:", error);
       }
