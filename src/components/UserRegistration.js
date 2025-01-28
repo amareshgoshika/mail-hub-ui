@@ -11,6 +11,7 @@ function UserRegistration() {
     email: "",
     phone: "",
     password: "",
+    confirmPassword: "",
   });
 
   // Handle input changes
@@ -26,9 +27,15 @@ function UserRegistration() {
       email: formData.email,
       phone: formData.phone,
       password: formData.password,
+      confirmPassword: formData.confirmPassword,
     };
 
     try {
+      if (formData.password !== formData.confirmPassword) {
+        alert("Passwords do not match.");
+        return;
+      }
+      
       await axios.post(process.env.REACT_APP_REGISTER_URL, dataToSubmit, {
         headers: { "Content-Type": "application/json" },
       });
@@ -150,7 +157,7 @@ function UserRegistration() {
                   id="confirmPassword"
                   name="confirmPassword"
                   type="password"
-                  value={formData.password}
+                  value={formData.confirmPassword}
                   onChange={handleInputChange}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
                   placeholder="••••••••"
