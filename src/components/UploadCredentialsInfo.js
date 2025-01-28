@@ -18,6 +18,18 @@ function UploadCredentialsInfo() {
           download a credentials JSON file from the Google Cloud Console. Follow
           the steps below:
         </p>
+
+        <div className="mb-6">
+          <iframe
+            className="w-full h-64 rounded-lg shadow-lg"
+            src="https://www.youtube.com/embed/2ouy8oE57D8"
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
+        </div>
+        
         <ol className="list-decimal list-inside text-gray-800 space-y-4">
           <li>
             Visit the{" "}
@@ -30,6 +42,7 @@ function UploadCredentialsInfo() {
             .
           </li>
           <li>Select your project or create a new one.</li>
+          <li>Search for Gmail API and enable it </li>
           <li>
             Navigate to the{" "}
             <a

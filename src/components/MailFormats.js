@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../firebase";
 import ReactQuill from 'react-quill';
@@ -15,28 +15,36 @@ const MailFormats = ({ setCurrentPage }) => {
   const [attachments, setAttachments] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
   const [file, setFile] = useState(null);
+  const [isDefault, setIsDefault] = useState(false);
   const fileInputRef = useRef(null)
+
+  const fetchMailFormats = useCallback(async (senderEmail) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_GET_MAIL_FORMATS_URL}?email=${senderEmail}`
+      );
+      const formats = response.data;
+      setMailFormats(formats);
+
+      const defaultFormat = formats.find((format) => format.isDefault === true);
+      if (defaultFormat) {
+        setSelectedFormat(defaultFormat);
+        handleFormatSelect(defaultFormat);
+      }
+    } catch (error) {
+      console.error("Error fetching mail formats:", error);
+    }
+  }, []);
   
   useEffect(() => {
     const senderEmail = localStorage.getItem("userEmail");
     if (senderEmail) {
       setUserEmail(senderEmail);
+      fetchMailFormats(senderEmail);
     } else {
       window.location.href = "/login";
     }
-    fetchMailFormats(senderEmail);
-  }, []);
-
-  const fetchMailFormats = async (senderEmail) => {
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_GET_MAIL_FORMATS_URL}?email=${senderEmail}`
-      );
-      setMailFormats(response.data);
-    } catch (error) {
-      console.error("Error fetching mail formats:", error);
-    }
-  };
+  }, [fetchMailFormats]);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -46,6 +54,7 @@ const MailFormats = ({ setCurrentPage }) => {
     setFormatName(format.formatName);
     setSubject(format.subject);
     setBody(format.body);
+    setIsDefault(format.isDefault);
 
     if (format.attachmentURL) {
         try {
@@ -111,6 +120,7 @@ const MailFormats = ({ setCurrentPage }) => {
       body,
       userEmail,
       attachmentURL: fileURL,
+      isDefault,
     };
 
     try {
@@ -129,6 +139,7 @@ const MailFormats = ({ setCurrentPage }) => {
         setFormatName("");
         setSubject("");
         setBody("");
+        setIsDefault("");
       } else {
         alert(`Error: ${data.error}`);
       }
@@ -206,6 +217,7 @@ const MailFormats = ({ setCurrentPage }) => {
         body,
         userEmail,
         attachmentURL: fileURL,
+        isDefault,
       };
   
       try {
@@ -393,6 +405,18 @@ const MailFormats = ({ setCurrentPage }) => {
                 />
             </div>
 
+            <div className="mb-6">
+              <label className="inline-flex items-center text-sm font-medium text-gray-700">
+                <span className="mr-2">Set as Default</span>
+                <input
+                  type="checkbox"
+                  checked={isDefault}
+                  onChange={() => setIsDefault(!isDefault)}
+                  className="form-checkbox h-5 w-5 text-indigo-600"
+                />
+              </label>
+            </div>
+
               <div className="flex justify-between">
                 <button
                   type="button"
@@ -501,6 +525,18 @@ const MailFormats = ({ setCurrentPage }) => {
                 className="w-full px-2 py-2 border rounded-md"
                 ref={fileInputRef}
                 />
+            </div>
+
+            <div className="mb-6">
+              <label className="inline-flex items-center text-sm font-medium text-gray-700">
+                <span className="mr-2">Set as Default</span>
+                <input
+                  type="checkbox"
+                  checked={isDefault}
+                  onChange={() => setIsDefault(!isDefault)}
+                  className="form-checkbox h-5 w-5 text-indigo-600"
+                />
+              </label>
             </div>
 
             {attachments.length > 0 && (

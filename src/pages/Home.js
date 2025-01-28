@@ -157,7 +157,7 @@ function Home() {
       {/* Benefits Section */}
       <div className="container mx-auto px-4 py-16 md:py-24">
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-          <div>
+          <div className="lg:ml-10">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">
               Everything You Need for Successful Email Campaigns
             </h2>
@@ -178,13 +178,20 @@ function Home() {
               ))}
             </div>
           </div>
-          <div className="bg-white p-4 md:p-8 rounded-2xl shadow-xl">
-            <img
-              src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80"
-              alt="Email Campaign Success"
-              className="rounded-lg w-full"
-            />
-          </div>
+
+          <div className="flex justify-center items-center mb-6">
+            <div className="relative bg-black lg:w-72 lg:h-[36rem] w-60 h-[30rem] rounded-[2.5rem] border-8 border-black shadow-lg">
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 bg-black w-24 h-6 rounded-b-2xl"></div>
+              <iframe
+                className="w-full h-full rounded-[2rem] mt-1"
+                src="https://www.youtube.com/embed/8ilK3KPrJjc?autoplay=1&loop=1&playlist=8ilK3KPrJjc&mute=1"
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+           </div>
         </div>
       </div>
       <Testimonials />

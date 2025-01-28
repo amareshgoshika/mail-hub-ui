@@ -101,7 +101,7 @@ function CredentialGenerate() {
                 onClick={handleInfoClick}
                 className="text-sm text-blue-600 hover:underline"
               >
-                Info
+                What is Credential file?
               </button>
             </div>
             <input
