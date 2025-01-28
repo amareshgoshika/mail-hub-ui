@@ -9,6 +9,7 @@ import {
   Phone,
   Mail,
   Users,
+  Edit3,
 } from 'lucide-react';
 import { loadStripe } from "@stripe/stripe-js";
 
@@ -30,6 +31,9 @@ function AccountPage() {
     email: "",
   });
   const [isFetched, setIsFetched] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedName, setEditedName] = useState(name);
+  const [editedPhone, setEditedPhone] = useState(phone);
 
   useEffect(() => {
     if (isFetched) return;
@@ -141,22 +145,80 @@ function AccountPage() {
     }
   };
 
+  const toggleEdit = () => setIsEditing((prev) => !prev);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'name') {
+      setEditedName(value);
+    } else if (name === 'phone') {
+      setEditedPhone(value);
+    }
+  };
+
+  const handleCancel = () => {
+    setEditedName(name);
+    setEditedPhone(phone);
+    setIsEditing(false);
+  };
+
+  const handleSave = async () => {
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL_HTTPS}/api/update-profile`, {
+        name: editedName,
+        phone: editedPhone,
+        email: formData.email,
+      });
+
+      if (response.status === 200) {
+        setName(editedName);
+        setPhone(editedPhone);
+        setIsEditing(false);
+        alert('Profile updated successfully!');
+      } else {
+        alert('Failed to update profile. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert('An error occurred. Please try again.');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-8">
       <div className="mx-auto max-w-7xl space-y-8">
         <div className="grid gap-8 md:grid-cols-2">
           {/* Profile Section */}
           <div className="col-span-2 rounded-lg bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-bold text-indigo-900">
-              Profile Information
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-indigo-900">
+                Profile Information
+              </h2>
+              <button
+                className="text-gray-500 hover:text-indigo-600"
+                onClick={toggleEdit}
+              >
+                <Edit3 className="h-5 w-5" />
+              </button>
+            </div>
             <div className="mt-6 space-y-6">
               <div className="grid gap-6 md:grid-cols-3">
                 <div className="flex items-center space-x-3">
                   <User className="h-5 w-5 text-indigo-600" />
                   <div>
                     <p className="text-sm text-gray-500">Full Name</p>
-                    <p className="font-medium">{name}</p>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        placeholder={name}
+                        className="w-full border border-gray-300 rounded-md px-2 py-1 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      />
+                    ) : (
+                      <p className="font-medium">{name}</p>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
@@ -170,17 +232,46 @@ function AccountPage() {
                   <Phone className="h-5 w-5 text-indigo-600" />
                   <div>
                     <p className="text-sm text-gray-500">Phone</p>
-                    <p className="font-medium">{phone}</p>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        placeholder={phone}
+                        className="w-full border border-gray-300 rounded-md px-2 py-1 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      />
+                    ) : (
+                      <p className="font-medium">{phone}</p>
+                    )}
                   </div>
                 </div>
               </div>
-              <div className="pt-4">
-                <button 
-                onClick={() => navigate('/?tab=ChangePassword')}
-                className="inline-flex items-center space-x-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+              <div className="pt-4 flex items-center justify-between">
+                <button
+                  onClick={() => navigate('/?tab=ChangePassword')}
+                  className="inline-flex items-center space-x-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                >
                   <Lock className="h-4 w-4" />
                   <span>Change Password</span>
                 </button>
+
+                {isEditing && (
+                  <div className="flex items-center space-x-4">
+                    <button
+                      onClick={handleSave}
+                      className="inline-flex items-center space-x-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={handleCancel}
+                      className="inline-flex items-center space-x-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
