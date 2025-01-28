@@ -10,6 +10,8 @@ import UserDashboard from "./pages/UserDashboard";
 import Home from "./pages/Home";
 import { Navbar } from "./components/NavBar";
 import MailFormats from "./components/MailFormats";
+import ForgotPassword from "./components/ForgotPassword";
+import ResetPassword from "./components/ResetPassword";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
       <Route path="/home" element={<Home />} />
       <Route path="/sendEmail" element={<SendEmail />} />
       <Route path="/mailformats" element={<MailFormats />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       <Route
         path="/upload-credentials-info"
