@@ -26,6 +26,9 @@ function SendEmail() {
   const [userEmail, setUserEmail] = useState("");
   const [emailList, setEmailList] = useState([]);
   const [sendingProgress, setSendingProgress] = useState(null);
+  const [mailingLists, setMailingLists] = useState([]);
+  const [selectedList, setSelectedList] = useState("");
+  const [selectedListEmail, setSelectedListEmail] = useState([]);
 
   useEffect(() => {
     const senderEmail = localStorage.getItem("userEmail");
@@ -78,7 +81,25 @@ function SendEmail() {
         console.error("Error fetching mail formats:", error);
       }
     };
+
+    const fetchVendorEmails = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL_HTTPS}/vendor-emails-collection?email=${senderEmail}`);
+        const mailingLists = response.data.mailingLists || [];
+    
+        if (mailingLists.length === 0) {
+          setMailingLists([]);
+          return;
+        }
+    
+        setMailingLists(mailingLists);
+      } catch (error) {
+        console.error("Error fetching vendor emails:", error);
+      }
+    };    
+
     fetchMailFormats();
+    fetchVendorEmails();
   }, []);
 
   const handleAuth = async () => {
@@ -140,9 +161,11 @@ function SendEmail() {
       return;
     }
 
-    const emailsToSend = recipientEmail ? [recipientEmail] : emailList;
+    const emailsToSend = 
+      recipientEmail ? [recipientEmail] : 
+      (emailList.length > 0 ? emailList : selectedListEmail);
     if (emailsToSend.length === 0) {
-      alert("No emails found in the CSV or single recipient field.");
+      alert("No emails found.");
       return;
     }
 
@@ -220,6 +243,13 @@ function SendEmail() {
     navigate("/");
   };
 
+  const handleMailingListChange = async (e) => {
+    const listName = e.target.value;
+    setSelectedList(listName);
+    const selectedMailingList = mailingLists.find(list => list.name === e.target.value)
+    setSelectedListEmail(selectedMailingList ? selectedMailingList.emails : []);
+  }
+
   const handleMailFormatChange = async (e) => {
     const formatId = e.target.value;
     setSelectedOption(formatId);
@@ -275,6 +305,7 @@ function SendEmail() {
     setSubject("");
     setBody("");
     setEmailList([]);
+    setSelectedList([]);
     setAttachments([]);
     setSelectedOption("");
     setSendingProgress(null);
@@ -385,6 +416,29 @@ function SendEmail() {
                 ref={csvInputRef}
               />
               </div>
+
+              <div className="text-center text-gray-500 font-medium mb-4">OR</div>
+
+              {mailingLists.length > 0 && (
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-2" htmlFor="mailingList">
+                    Select Mailing List
+                  </label>
+                  <select
+                    id="mailingList"
+                    className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    value={selectedList}
+                    onChange={handleMailingListChange}
+                  >
+                    <option value="">Select Mailing List</option>
+                    {mailingLists.map((list, index) => (
+                      <option key={index} value={list.name}>
+                        {list.name} ({list.emails.length} emails)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
   
               {/* Buttons & progress */}
               <div className="flex items-center space-x-4 mt-4">
