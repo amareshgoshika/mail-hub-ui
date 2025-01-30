@@ -418,10 +418,9 @@ function SendEmail() {
               />
               </div>
 
-              <div className="text-center text-gray-500 font-medium mb-4">OR</div>
-
               {mailingLists.length > 0 && (
                 <div className="mb-4">
+                  <div className="text-center text-gray-500 font-medium mb-4">OR</div>
                   <label className="block text-sm font-medium mb-2" htmlFor="mailingList">
                     Select Mailing List
                   </label>
