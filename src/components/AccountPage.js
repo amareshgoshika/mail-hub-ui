@@ -174,7 +174,7 @@ function AccountPage() {
         setName(editedName);
         setPhone(editedPhone);
         setIsEditing(false);
-        alert('Profile updated successfully!');
+        alert('Profile updated successfully! Refresh the page.');
       } else {
         alert('Failed to update profile. Please try again.');
       }
