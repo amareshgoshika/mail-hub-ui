@@ -305,7 +305,8 @@ function SendEmail() {
     setSubject("");
     setBody("");
     setEmailList([]);
-    setSelectedList([]);
+    setSelectedList("");
+    setSelectedListEmail([]);
     setAttachments([]);
     setSelectedOption("");
     setSendingProgress(null);
