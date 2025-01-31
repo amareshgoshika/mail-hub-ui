@@ -12,6 +12,7 @@ import { Navbar } from "./components/NavBar";
 import MailFormats from "./components/MailFormats";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
+import AdminDashboard from "./components/admin/AdminDashboard";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
       <Route path="/mailformats" element={<MailFormats />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/admin-dashboard" element={<AdminDashboard />} />
 
       <Route
         path="/upload-credentials-info"
