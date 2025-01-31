@@ -1,5 +1,5 @@
-import React, { useState} from 'react';
-import { Search, RotateCcw, Send, LayoutDashboard } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { RotateCcw, Send, LayoutDashboard } from 'lucide-react';
 import axios from 'axios';
 import Papa from 'papaparse';
 
@@ -15,6 +15,31 @@ function AdminDashboard() {
   const [vendorEmailList, setVendorEmailList] = useState([]);
   const [customerEmailList, setCustomerEmailList] = useState([]);
   const [fileInputKey, setFileInputKey] = useState(Date.now());
+  const [searchEmail, setSearchEmail] = useState("");
+  const [userData, setUserData] = useState(null);
+  const [userPaymentsData, setUserPaymentsData] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUserEmails = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL_HTTPS}/admin/list-of-users`);
+            setUsers(response.data);
+        } catch (err) {
+            console.error("Error fetching user emails:", err);
+            setError("Failed to load user emails.");
+        }
+    };
+
+    fetchUserEmails();
+}, []);
+
+const onSelectUser = (email) => {
+    setSearchEmail("");
+    setSelectedUser(email);
+    handleSearch();
+};
 
   const handleLogin = async () => {
     try {
@@ -120,6 +145,50 @@ function AdminDashboard() {
     setVendorEmailList([]);
     setCustomerEmailList([]);
     setFileInputKey(Date.now());
+    setSearchEmail("");
+    setSelectedUser("");
+  };
+
+  const handleSearchInputChange = (event) => {
+    setSearchEmail(event.target.value);
+    setSelectedUser("");
+  };
+
+  const handleSearch = async () => {
+
+    const emailToSearch = selectedUser || searchEmail;
+
+    if (!emailToSearch) {
+      setError("Please enter an email.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL_HTTPS}/admin/search-user?email=${encodeURIComponent(emailToSearch)}`);
+      const result = await response.json();
+
+      if (!result.success) {
+        setUserData(null);
+        setError(result.message);
+      } else {
+        const { createdAt, updatedAt, ...filteredUserData } = result.user;
+        const filteredUserPaymentsData = result.userPayments.map(payment => {
+            const { createdAt, updatedAt, transactionDate, ...filteredPaymentData } = payment;
+            return {
+              ...filteredPaymentData,
+              transactionDate: transactionDate ? new Date(transactionDate._seconds * 1000).toLocaleString() : '',
+              createdAt: createdAt ? new Date(createdAt._seconds * 1000).toLocaleString() : '',
+              updatedAt: updatedAt ? new Date(updatedAt._seconds * 1000).toLocaleString() : ''
+            };
+          });
+        setUserData(filteredUserData);
+        setUserPaymentsData(filteredUserPaymentsData);
+        setError(null);
+      }
+    } catch (err) {
+      console.error("Search error:", err);
+      setError("Error searching for user.");
+    }
   };
 
   if (!isAuthenticated) {
@@ -192,17 +261,95 @@ function AdminDashboard() {
 
         <div className="mt-6">
           {activeTab === 'userData' ? (
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
-                />
-                <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-              </div>
+            <div className="bg-white rounded-lg shadow p-4 md:p-6">
+                <div className="relative">
+                    <input
+                        type="text"
+                        placeholder="Search by email..."
+                        value={searchEmail}
+                        onChange={handleSearchInputChange}
+                        className="w-full pl-8 pr-3 py-1 md:py-2 border border-gray-300 rounded-lg text-sm md:text-base focus:ring-indigo-500 focus:border-indigo-500"
+                    />
+                    <button
+                        onClick={handleSearch}
+                        className="absolute right-2 top-2 bg-indigo-600 text-white px-2 py-1 text-xs md:text-sm rounded hover:bg-indigo-700"
+                    >
+                        Search
+                    </button>
+                    {error && <p className="mt-2 text-xs md:text-sm text-red-600">{error}</p>}
+                </div>
+            
+                <div className="flex flex-col md:flex-row gap-3 md:gap-4 p-2 md:p-4">
+                    <div className="w-full md:w-1/2 p-2 md:p-4 border rounded-lg bg-gray-50">
+                        <h3 className="text-sm md:text-lg font-semibold">User Emails</h3>
+                        <ul className="mt-1 md:mt-2 space-y-1 md:space-y-2">
+                            {users.map((user) => (
+                                <li 
+                                    key={user.email} 
+                                    className={`cursor-pointer p-1 md:p-2 text-sm md:text-base rounded-lg ${selectedUser === user.email ? 'bg-blue-200' : 'hover:bg-gray-200'}`}
+                                    onClick={() => onSelectUser(user.email)}
+                                >
+                                    {user.email}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+            
+                    <div className="w-full md:w-1/2 p-2 md:p-4 border rounded-lg bg-gray-50">
+                        <h3 className="text-sm md:text-lg font-semibold">User Details</h3>
+                        {userData && (
+                            <div className="space-y-1 md:space-y-2">
+                                {Object.entries(userData).map(([key, value]) => (
+                                    <div key={key} className="flex items-center justify-between">
+                                        <label className="text-gray-700 font-medium text-xs md:text-sm uppercase">{key}:</label>
+                                        <input
+                                            type="text"
+                                            value={value}
+                                            readOnly
+                                            className="w-1/2 p-1 text-xs md:text-sm border border-gray-300 rounded-md bg-gray-100 text-gray-700"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            
+                <div className="w-full md:w-full p-2 md:p-4 border rounded-lg bg-gray-50">
+                    <h3 className="text-sm md:text-lg font-semibold">User Payment Data</h3>
+                    {userPaymentsData && userPaymentsData.length > 0 ? (
+                        <table className="min-w-full table-auto border-collapse">
+                        <thead>
+                            <tr>
+                            {Object.keys(userPaymentsData[0]).map((key) => (
+                                (key !== "userEmail" && key !== "id") && (
+                                <th key={key} className="px-4 py-2 text-left text-xs md:text-sm font-medium text-gray-700 border-b border-gray-300 uppercase">
+                                    {key}
+                                </th>
+                                )
+                            ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {userPaymentsData.map((payment, rowIndex) => (
+                            <tr key={rowIndex} className="border-b border-gray-200">
+                                {Object.entries(payment).map(([key, value], colIndex) => (
+                                (key !== "userEmail" && key !== "id") && (
+                                    <td key={colIndex} className="px-4 py-2 text-xs md:text-sm text-gray-700">
+                                    {value}
+                                    </td>
+                                )
+                                ))}
+                            </tr>
+                            ))}
+                        </tbody>
+                        </table>
+                    ) : (
+                        <p>No payment data available.</p>
+                    )}
+                </div>
             </div>
-          ) : (
+            ) : (
             <div className="grid md:grid-cols-2 gap-6">
               <div className="bg-white rounded-lg shadow p-4">
                 <h3 className="text-base font-medium mb-3">Upload Vendor Emails CSV</h3>
