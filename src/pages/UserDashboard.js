@@ -1,28 +1,32 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Navigate } from "react-router-dom";
 import SendEmail from "../components/SendEmail";
 import CredentialGenerate from "../components/CredentialGenerate";
 import AccountPage from "../components/AccountPage";
 import MailFormats from "../components/MailFormats";
-import { Mail, Key, FileText, Users, CreditCard, LogOut } from 'lucide-react';
+import { Mail, Key, FileText, Users, CreditCard, LogOut } from "lucide-react";
 import SubscriptionManagement from "../components/SubscriptionManagement";
 import ChangePassword from "../components/ChangePassword";
 
 const UserDashboard = () => {
-  const [currentPage, setCurrentPage] = useState("SendEmail");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const sidebarPages = ['SendEmail', 'GenerateCredential', 'MailFormats', 'Account']; 
+  const [currentPage, setCurrentPage] = useState("SendEmail");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const pageComponents = useMemo(() => ({
-    SendEmail: <SendEmail />,
-    GenerateCredential: <CredentialGenerate />,
-    MailFormats: <MailFormats setCurrentPage={setCurrentPage} />,
-    Account: <AccountPage />,
-    SubscriptionManagement: <SubscriptionManagement />,
-    ChangePassword: <ChangePassword />,
-  }), []);
+  const userEmail = localStorage.getItem("userEmail");
+
+  const pageComponents = useMemo(
+    () => ({
+      SendEmail: <SendEmail />,
+      GenerateCredential: <CredentialGenerate />,
+      MailFormats: <MailFormats setCurrentPage={setCurrentPage} />,
+      Account: <AccountPage />,
+      SubscriptionManagement: <SubscriptionManagement />,
+      ChangePassword: <ChangePassword />,
+    }),
+    [setCurrentPage]
+  );
 
   const tabIcons = {
     SendEmail: <Mail />,
@@ -34,19 +38,17 @@ const UserDashboard = () => {
   };
 
   useEffect(() => {
-    const userEmail = localStorage.getItem("userEmail");
-    if (userEmail === "null") {
-      alert("Please login to continue");
-      navigate("/home"); 
-    }
-
     const params = new URLSearchParams(location.search);
     const tab = params.get("tab");
     if (tab && pageComponents[tab]) {
       setCurrentPage(tab);
     }
+  }, [location.search, pageComponents]);
 
-  }, [navigate, location, pageComponents]);
+  if (!userEmail || userEmail === "null") {
+    alert("Please login to continue");
+    return <Navigate to="/home" replace />;
+  }
 
   const handleLogout = () => {
     localStorage.setItem("userEmail", null);
@@ -58,9 +60,7 @@ const UserDashboard = () => {
     navigate(`/?tab=${page}`);
   };
 
-  const renderCurrentPage = () => {
-    return pageComponents[currentPage];
-  };
+  const renderCurrentPage = () => pageComponents[currentPage];
 
   return (
     <div className="flex h-screen">
@@ -70,28 +70,30 @@ const UserDashboard = () => {
         } lg:translate-x-0`}
       >
         <ul className="space-y-4 p-4">
-          {sidebarPages.map((page) => (
-            <li
-              key={page}
-              className={`cursor-pointer p-2 rounded-md ${
-                currentPage === page ? "bg-gray-200" : "hover:bg-gray-300"
-              }`}
-              onClick={() => handleTabClick(page)}
-            >
-            <span className="flex items-center">
-              <span className="mr-2">{tabIcons[page]}</span>
-              {page}
-            </span>
-            </li>
-          ))}
+          {["SendEmail", "GenerateCredential", "MailFormats", "Account"].map(
+            (page) => (
+              <li
+                key={page}
+                className={`cursor-pointer p-2 rounded-md ${
+                  currentPage === page ? "bg-gray-200" : "hover:bg-gray-300"
+                }`}
+                onClick={() => handleTabClick(page)}
+              >
+                <span className="flex items-center">
+                  <span className="mr-2">{tabIcons[page]}</span>
+                  {page}
+                </span>
+              </li>
+            )
+          )}
         </ul>
         <div className="p-4">
           <button
             onClick={handleLogout}
             className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md"
           >
-              <span className="flex items-center">
-              <span className="mr-2">{tabIcons['Logout']}</span>
+            <span className="flex items-center">
+              <span className="mr-2">{tabIcons["Logout"]}</span>
               Logout
             </span>
           </button>
