@@ -5,6 +5,7 @@ import Papa from 'papaparse';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { Loader } from 'lucide-react';
+import { MdContentPaste } from "react-icons/md";
 
 function SendEmail() {
   const navigate = useNavigate();
@@ -326,6 +327,15 @@ function SendEmail() {
     }
   };
 
+  const handlePasteClick = async () => {
+    try {
+      const textFromClipboard = await navigator.clipboard.readText();
+      setRecipientEmail(textFromClipboard);
+    } catch (err) {
+      console.error("Failed to read clipboard contents: ", err);
+    }
+  };
+
   const handleBodyChange = (value) => {
     setBody(value);
   };
@@ -391,7 +401,7 @@ function SendEmail() {
                   className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
               </div>
-              <div className="mb-4">
+              <div className="mb-4 relative">
                 <input
                   type="email"
                   value={recipientEmail}
@@ -399,6 +409,13 @@ function SendEmail() {
                   placeholder="Recipient email"
                   className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
+                <button
+                  type="button"
+                  onClick={handlePasteClick}
+                  className="absolute right-2 top-2 text-gray-400 hover:text-gray-600"
+                >
+                  <MdContentPaste size={20} />
+                </button>
               </div>
   
               <div className="text-center text-gray-500 font-medium mb-4">OR</div>
