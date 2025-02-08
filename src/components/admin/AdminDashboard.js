@@ -14,6 +14,7 @@ function AdminDashboard() {
   const [, setIsCSVActive] = useState(false);
   const [vendorEmailList, setVendorEmailList] = useState([]);
   const [customerEmailList, setCustomerEmailList] = useState([]);
+  const [benchsalesEmailList, setBenchsalesEmailList] = useState([]);
   const [fileInputKey, setFileInputKey] = useState(Date.now());
   const [searchEmail, setSearchEmail] = useState("");
   const [userData, setUserData] = useState(null);
@@ -97,6 +98,25 @@ const onSelectUser = (email) => {
     });
   };
 
+  const handleBenchsalesCSVFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      setCsvFileName("No file chosen...");
+      setIsCSVActive(false);
+      return;
+    }
+    setCsvFileName(file.name);
+    setIsCSVActive(true);
+
+    Papa.parse(file, {
+      complete: (result) => {
+        const emails = result.data.map((row) => row[0]);
+        setBenchsalesEmailList(emails);
+      },
+      header: false,
+    });
+  };
+
   const handleVendorEmailsSave = async () => {
     if (!vendorEmailList || vendorEmailList.length === 0) {
       alert("No emails to upload");
@@ -128,6 +148,28 @@ const onSelectUser = (email) => {
     try {
       const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL_HTTPS}/admin/save-customer-emails`, {
         emails: customerEmailList,
+      });
+  
+      if (response.data.success) {
+        alert("Emails successfully saved to Firebase!");
+      } else {
+        alert("Failed to save emails. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error saving emails:", error);
+      alert("An error occurred while saving emails.");
+    }
+  };
+
+  const handleBenchsalesEmailsSave = async () => {
+    if (!benchsalesEmailList || benchsalesEmailList.length === 0) {
+      alert("No emails to upload");
+      return;
+    }
+  
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL_HTTPS}/admin/save-benchsales-emails`, {
+        emails: benchsalesEmailList,
       });
   
       if (response.data.success) {
@@ -403,6 +445,36 @@ const onSelectUser = (email) => {
                     </button>
                     <button 
                         onClick={handleCustomerEmailsSave}
+                        className="flex items-center px-3 py-1 bg-indigo-600 text-white rounded text-sm hover:bg-indigo-700">
+                      <Send className="h-3 w-3 mr-1" />
+                      Submit
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow p-4">
+                <h3 className="text-base font-medium mb-3">Upload Benchsales Emails CSV</h3>
+                <div className="space-y-3">
+                    <div className="mb-4">
+                    <input
+                        type="file"
+                        key={fileInputKey}
+                        id="csvUpload"
+                        accept=".csv"
+                        onChange={handleBenchsalesCSVFileChange}
+                        className="w-full border border-gray-300 rounded-md p-2"
+                    />
+                    </div>
+                  <div className="flex justify-end space-x-2">
+                    <button 
+                        onClick={handleReset}
+                        className="flex items-center px-3 py-1 border border-gray-300 rounded text-gray-700 text-sm hover:bg-gray-50">
+                      <RotateCcw className="h-3 w-3 mr-1" />
+                      Reset
+                    </button>
+                    <button 
+                        onClick={handleBenchsalesEmailsSave}
                         className="flex items-center px-3 py-1 bg-indigo-600 text-white rounded text-sm hover:bg-indigo-700">
                       <Send className="h-3 w-3 mr-1" />
                       Submit
